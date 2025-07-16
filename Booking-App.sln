@@ -4,12 +4,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.14.36310.24 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingAPI", "Booking-App\BookingAPI.csproj", "{ACAC8349-AC51-4972-BB6A-4C3DD9ED1EFA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BD2B856A-47AC-4172-B6F1-AA8C97768C55} = {BD2B856A-47AC-4172-B6F1-AA8C97768C55}
+		{F27CA3D1-976C-4840-A94B-50A31312F8DE} = {F27CA3D1-976C-4840-A94B-50A31312F8DE}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Domain", "Booking.Domain\Booking.Domain.csproj", "{8EF89513-818F-4D82-B941-E271CF4F818E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Infrastructure", "Booking.Infrastructure\Booking.Infrastructure.csproj", "{BD2B856A-47AC-4172-B6F1-AA8C97768C55}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8EF89513-818F-4D82-B941-E271CF4F818E} = {8EF89513-818F-4D82-B941-E271CF4F818E}
+		{F27CA3D1-976C-4840-A94B-50A31312F8DE} = {F27CA3D1-976C-4840-A94B-50A31312F8DE}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Application", "Booking.Application\Booking.Application.csproj", "{F27CA3D1-976C-4840-A94B-50A31312F8DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8EF89513-818F-4D82-B941-E271CF4F818E} = {8EF89513-818F-4D82-B941-E271CF4F818E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
