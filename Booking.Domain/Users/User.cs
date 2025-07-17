@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Booking.Domain.Owners;
 
 namespace Booking.Domain.Users
 {
@@ -16,5 +17,11 @@ namespace Booking.Domain.Users
         public string Email { get; private set; } 
         public string Password { get; private set; } 
         public DateTime CreatedOnUtc { get; private set; }
+        public Owner? Owner { get; private set; }
+
+        public User()
+        {
+
+        }
     }
 }

@@ -26,6 +26,10 @@ namespace Booking.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            //query: per tabelen user, indexi qe eshte kolona e-mail te jete gjithmone unik
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
 
