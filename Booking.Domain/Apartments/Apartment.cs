@@ -19,7 +19,7 @@ namespace Booking.Domain.Apartments
         public decimal CleaningFee { get; private set; }
         public DateTime? LastBookedOnUtc { get; private set; }
 
-        public List<Amenity> Amenities { get; private set; } = [];
-        public List<Owner> Owners { get; } = [];
+        public virtual ICollection<Amenity> Amenities { get; private set; } = [];
+        public virtual ICollection<Owner> Owners { get; } = [];
     }
 }

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Booking.Application.Abstractions.Database;
 using Booking.Domain.Apartments;
 using Booking.Domain.Bookings;
 using Booking.Domain.Owners;
@@ -14,14 +13,14 @@ using Booking.Domain.Users;
 
 namespace Booking.Infrastructure
 {
-    public class BookingContext : DbContext, IApplicationContext
+    public class BookingContext : DbContext
     {
         public BookingContext(DbContextOptions<BookingContext> options) : base(options) { }
-        public DbSet<Apartment> Apartments => Set<Apartment>();
-        public DbSet<User> Users => Set<User>();
-        public DbSet<Owner> Owners => Set<Owner>();
-        public DbSet<BookingEntity> Bookings => Set<BookingEntity>();
-        public DbSet<Review> Reviews => Set<Review>();
+        public DbSet<Apartment> Apartments { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Owner> Owners { get; set; }
+        public DbSet<BookingEntity> Bookings { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
