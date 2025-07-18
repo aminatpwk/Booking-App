@@ -19,6 +19,10 @@ namespace Booking.Domain.Users
         public DateTime CreatedOnUtc { get; private set; }
         public Owner? Owner { get; private set; }
 
+        public User()
+        {
+        }
+
         public User(Guid id, string firstName, string lastName, string email, string password, DateTime createdOnUtc)
         {
 
