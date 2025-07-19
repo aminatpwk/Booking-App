@@ -34,6 +34,8 @@ namespace Booking.Application.Features.Users.Commands.CreateUser
             }
 
             var password = request.UserDto.Password;
+            request.UserDto.Password = BCrypt.Net.BCrypt.HashPassword(password, 13);
+
             var user = User.CreateUser(request.UserDto);
 
             await _userRepository.Add(user);
