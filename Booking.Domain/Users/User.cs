@@ -25,7 +25,12 @@ namespace Booking.Domain.Users
 
         public User(Guid id, string firstName, string lastName, string email, string password, DateTime createdOnUtc)
         {
-
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Password = password;
+            CreatedOnUtc = createdOnUtc;
         }
 
         public static User CreateUser(UserDto userDto)

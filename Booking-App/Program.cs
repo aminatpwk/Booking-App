@@ -1,4 +1,7 @@
+using Booking.Application.Features.Users;
+using Booking.Application.Features.Users.Commands.CreateUser;
 using Booking.Infrastructure;
+using Booking.Infrastructure.Users;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,13 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString =
-    builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? throw new InvalidOperationException("Connection string"
-        + "'DefaultConnection' not found.");
-
-builder.Services.AddDbContext<BookingContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.ConfigureInfrastructureServices(builder.Configuration);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateUserHandler>());
 
 var app = builder.Build();  
 

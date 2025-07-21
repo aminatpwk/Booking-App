@@ -24,7 +24,8 @@ namespace Booking.Application.Features.Users.Commands.CreateUser
             var isValidResult = await _validations.ValidateAsync(request, cancellationToken);
             if (!isValidResult.IsValid)
             {
-                throw new ValidationException();
+                var errors = string.Join(", ", isValidResult.Errors.Select(e => e.ErrorMessage));
+                throw new ValidationException($"Validation failed: {errors}");
             }
 
             var isUniqueUser = await _userRepository.IsEmailUnique(request.UserDto.Email, cancellationToken);

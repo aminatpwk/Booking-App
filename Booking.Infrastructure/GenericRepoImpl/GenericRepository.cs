@@ -18,6 +18,7 @@ namespace Booking.Infrastructure.GenericRepoImpl
         public async Task<T> Add(T entity)
         {
             await context.AddAsync(entity);
+            await context.SaveChangesAsync();
             return entity;
         }
 
