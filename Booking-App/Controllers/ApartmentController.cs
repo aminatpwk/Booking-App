@@ -12,7 +12,10 @@ namespace Booking_App.Controllers
         [HttpPost]
         public async Task<IResult> Create([FromBody] ApartmentDto apartmentDto)
         {
+            //apartmentdto = dmth qe objektin qe kemi ne body do e vendosim aty
             var command = new CreateApartmentCommand { ApartmentDto = apartmentDto };
+
+            //duhet ti bejme handle result qe te ktheje ok ose status code tjeter
             var result = await _sender.Send(command);
             return Results.Ok(result);
         }

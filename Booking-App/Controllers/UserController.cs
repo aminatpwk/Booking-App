@@ -10,8 +10,6 @@ namespace Booking_App.Controllers
     [ApiController]
     public class UserController(ISender _sender) : ControllerBase
     {
-        
-
         [HttpPost]
         public async Task<IResult> Register([FromBody] UserDto userDto)
         {

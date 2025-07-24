@@ -9,13 +9,9 @@ using Booking.Infrastructure.Apartments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
+using Booking.Application.Features.Owners;
+using Booking.Infrastructure.Owners;
+using Booking.Application.Features.Owners.Commands;
 namespace Booking.Infrastructure
 {
     public static class InfrastructureServicesRegistration
@@ -36,6 +32,10 @@ namespace Booking.Infrastructure
             //apartment scopes
             services.AddScoped<IApartmentRepository, ApartmentRepository>();
             services.AddScoped<CreateApartmentValidations>();
+
+            //owner scopes
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
+            services.AddScoped<CreateOwnerValidations>();
             return services;
 
         }
