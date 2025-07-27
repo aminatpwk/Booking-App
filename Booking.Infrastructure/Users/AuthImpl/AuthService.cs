@@ -5,19 +5,27 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Users.AuthImpl
 {
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
-        public AuthService(IConfiguration configuration)
+        private readonly BookingContext _context;
+        public AuthService(IConfiguration configuration, BookingContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
 
         public async Task<string> GenerateToken(User user)
         {
+            user = await _context.Users
+                .Include(u => u.Owner)
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+            var role = user.Owner is not null ? "Owner" : "User";
+
             string secretKey = _configuration.GetSection("JwtConfig").GetSection("SecretKey").Value;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var expirationTime = _configuration.GetSection("JwtConfig").GetSection("lifetime").Value;
@@ -28,6 +36,7 @@ namespace Booking.Infrastructure.Users.AuthImpl
                 [
                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                   new Claim(ClaimTypes.Role, role),
                 ]),
                 Expires = DateTime.UtcNow.AddSeconds(int.Parse(expirationTime)),
                 SigningCredentials = credentials,
