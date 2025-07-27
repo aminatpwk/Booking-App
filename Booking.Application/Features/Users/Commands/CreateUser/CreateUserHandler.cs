@@ -1,11 +1,7 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Booking.Domain.Users;
 using System.ComponentModel.DataAnnotations;
+
 namespace Booking.Application.Features.Users.Commands.CreateUser
 {
     public class CreateUserHandler : IRequestHandler<CreateUserCommand, Guid>
@@ -29,20 +25,22 @@ namespace Booking.Application.Features.Users.Commands.CreateUser
             }
 
             var isUniqueUser = await _userRepository.IsEmailUnique(request.UserDto.Email, cancellationToken);
-            if(!isUniqueUser)
+            if (!isUniqueUser)
             {
                 throw new Exception("User with this e-mail already exists!");
             }
 
-            var password = request.UserDto.Password;
-            request.UserDto.Password = BCrypt.Net.BCrypt.HashPassword(password, 13);
-
-            var user = User.CreateUser(request.UserDto);
+            var user = new User(
+                id: Guid.NewGuid(),
+                firstName: request.UserDto.FirstName,
+                lastName: request.UserDto.LastName,
+                email: request.UserDto.Email,
+                password: BCrypt.Net.BCrypt.HashPassword(request.UserDto.Password, 13),
+                createdOnUtc: DateTime.UtcNow
+            );
 
             await _userRepository.Add(user);
-
             return user.Id;
-
         }
     }
 }

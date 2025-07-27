@@ -12,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Booking.Application.Features.Owners;
 using Booking.Infrastructure.Owners;
 using Booking.Application.Features.Owners.Commands;
+using Booking.Application.Features.Users.Auth;
+using Booking.Infrastructure.Users.AuthImpl;
+
 namespace Booking.Infrastructure
 {
     public static class InfrastructureServicesRegistration
@@ -36,6 +39,8 @@ namespace Booking.Infrastructure
             //owner scopes
             services.AddScoped<IOwnerRepository, OwnerRepository>();
             services.AddScoped<CreateOwnerValidations>();
+
+            services.AddScoped<IAuthService, AuthService>();
             return services;
 
         }
