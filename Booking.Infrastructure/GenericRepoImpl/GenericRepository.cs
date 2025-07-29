@@ -10,6 +10,11 @@ namespace Booking.Infrastructure.GenericRepoImpl
 {
     public class GenericRepository<T>(BookingContext context) : IGenericRepository<T> where T : class
     {
+        public async Task<T> GetById(Guid id)
+        {
+            return await context.Set<T>().FindAsync(id);
+        }
+
         public async Task<List<T>> GetAll()
         {
             return await context.Set<T>().ToListAsync();

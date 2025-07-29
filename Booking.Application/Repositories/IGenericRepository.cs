@@ -8,6 +8,7 @@ namespace Booking.Application.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
+        Task<T> GetById(Guid id);
         Task<List<T>> GetAll();
         Task<T> Add(T entity);
         void Update(T entity);
