@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Booking.Domain.Photos;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace Booking.Domain.Apartments
 
         public virtual ICollection<Amenity> Amenities { get; private set; } = [];
         public virtual ICollection<Owner> Owners { get; } = [];
+        public virtual ICollection<Photo> Photos { get; } = [];
 
         public static Apartment Create(ApartmentDto apartmentdto, Owner owner)
         {
