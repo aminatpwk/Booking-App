@@ -1,57 +1,61 @@
-﻿using Booking.Domain.Owners;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using Booking.Domain.Apartments;
+using Booking.Domain.Owners;
 using Booking.Domain.Photos;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-namespace Booking.Domain.Apartments
+using System.ComponentModel.DataAnnotations;
+
+public class Apartment
 {
-    public class Apartment
+    public Apartment(Guid id, string name, string address, decimal price, string description, decimal cleaningFee, List<Amenity> amenities, Guid ownerId)
     {
-        public Apartment(Guid id, string name, string address, decimal price, string description, decimal cleaningFee, List<Amenity> amenities)
-        {
-            Id = id;
-            Name = name;
-            Address = address;
-            Price = price;
-            Decription = description;
-            CleaningFee = cleaningFee;
-            Amenities = amenities;
-        }
+        Id = id;
+        Name = name;
+        Address = address;
+        Price = price;
+        Decription = description;
+        CleaningFee = cleaningFee;
+        Amenities = amenities;
+        OwnerId = ownerId;
+    }
 
-        public Apartment()
-        {
+    public Apartment() { }
 
-        }
+    [Key]
+    public Guid Id { get; set; }
+    public string Name { get; private set; }
+    public string Address { get; private set; }
+    public decimal Price { get; private set; }
+    public string Decription { get; private set; }
+    public decimal CleaningFee { get; private set; }
+    public DateTime? LastBookedOnUtc { get; private set; }
 
-        [Key]
-        public Guid Id { get; set; }
-        public string Name { get; private set; }
-        public string Address { get; private set; }
-        public decimal Price { get; private set; }
-        public string Decription { get; private set; }
-        public decimal CleaningFee { get; private set; }
-        public DateTime? LastBookedOnUtc { get; private set; }
+    public virtual ICollection<Amenity> Amenities { get; private set; } = [];
+    public virtual ICollection<Photo> Photos { get; } = [];
 
-        public virtual ICollection<Amenity> Amenities { get; private set; } = [];
-        public virtual ICollection<Owner> Owners { get; } = [];
-        public virtual ICollection<Photo> Photos { get; } = [];
+    public Guid OwnerId { get; private set; }
+    public Owner Owner { get; private set; }
 
-        public static Apartment Create(ApartmentDto apartmentdto, Owner owner)
-        {
-            var id = Guid.NewGuid();
-            var apartment = new Apartment(
-                id,
-                apartmentdto.Name,
-                apartmentdto.Address,
-                apartmentdto.Price,
-                apartmentdto.Description,
-                apartmentdto.CleaningFee,
-                apartmentdto.Amenities);
-            apartment.Owners.Add(owner);
-            return apartment;
-        }
+    public static Apartment Create(ApartmentDto apartmentdto, Owner owner)
+    {
+        var id = Guid.NewGuid();
+        var apartment = new Apartment(
+            id,
+            apartmentdto.Name,
+            apartmentdto.Address,
+            apartmentdto.Price,
+            apartmentdto.Description,
+            apartmentdto.CleaningFee,
+            apartmentdto.Amenities,
+            owner.Id);
+        return apartment;
+    }
+
+    public void UpdateApartment(string name, string address, decimal price, string description, decimal cleaningfee, List<Amenity> amenities)
+    {
+        Name = name;
+        Address = address;
+        Price = price;
+        Decription = description;
+        CleaningFee = cleaningfee;
+        Amenities = amenities;
     }
 }

@@ -12,12 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureInfrastructureServices(builder.Configuration);
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateUserHandler>());
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateApartmentHandler>());
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateOwnerHandler>());
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(GetApartmentQuery).Assembly,typeof(GetApartmentHandler).Assembly));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<DeleteApartmentHandler>());
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<UpdateApartmentHandler>());
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+    typeof(CreateUserHandler).Assembly,        
+    typeof(CreateApartmentHandler).Assembly,   
+    typeof(CreateOwnerHandler).Assembly,       
+    typeof(GetApartmentHandler).Assembly,      
+    typeof(DeleteApartmentHandler).Assembly,   
+    typeof(UpdateApartmentHandler).Assembly    
+));
 builder.Services.AddAuthorization();
 
 var app = builder.Build();  

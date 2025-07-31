@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Booking.Application.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Booking.Application.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.GenericRepoImpl
 {
@@ -27,14 +28,30 @@ namespace Booking.Infrastructure.GenericRepoImpl
             return entity;
         }
 
-        public void Delete(T entity)
+        public async Task Delete(T entity)
         {
             context.Remove(entity);
+            await context.SaveChangesAsync();
         }
 
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
-            context.Update(entity);
+            var entry = context.Entry(entity);
+
+            if (entry.State == EntityState.Detached)
+            {
+                var existing = await context.Set<T>().FindAsync();
+                if (existing != null)
+                {
+                    context.Entry(existing).CurrentValues.SetValues(entity);
+                }
+                else
+                {
+                    context.Update(entity);
+                }
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }

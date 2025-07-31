@@ -22,7 +22,7 @@ namespace Booking.Application.Features.Apartments.Commands.DeleteApartment
             {
                 throw new Exception("Apartment not found!");
             }
-             _apartmentRepository.Delete(apartment);
+             await _apartmentRepository.Delete(apartment);
             return apartment.Id;
         }
     }

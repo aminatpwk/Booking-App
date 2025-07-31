@@ -17,8 +17,6 @@ namespace Booking.Application.Features.Owners.Commands
 
             RuleFor(x => x.OwnerDto.PhoneNumber).NotEmpty().WithMessage("Phone number is a required field.")
                 .Matches(@"^\d{10}$").WithMessage("Phone number must be exactly 10 digits.");
-
-            RuleFor(x => x.OwnerDto.ApartmentId).NotNull().NotEmpty();
         }
 
         private bool IsValidIdentityCard(string identitycardno)

@@ -24,6 +24,11 @@ namespace Booking.Infrastructure
 
             //query: per tabelen user, indexi qe eshte kolona e-mail te jete gjithmone unik
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            modelBuilder.Entity<Apartment>()
+                .HasOne(a => a.Owner)
+                .WithMany(o => o.Apartments)
+                .HasForeignKey(a => a.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

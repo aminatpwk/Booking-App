@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.Features.Apartments.Commands.UpdateApartment
 {
-    public class UpdateApartmentHandler : IRequestHandler<CreateApartmentCommand, Guid>
+    public class UpdateApartmentHandler : IRequestHandler<UpdateApartmentCommand, Guid>
     {
         private readonly IApartmentRepository _repository;
         public UpdateApartmentHandler(IApartmentRepository repository)
@@ -17,21 +17,31 @@ namespace Booking.Application.Features.Apartments.Commands.UpdateApartment
             _repository = repository;
         }
 
-        public async Task<Guid> Handle(CreateApartmentCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(UpdateApartmentCommand request, CancellationToken cancellationToken)
         {
-            var apartmentOwner = await _repository.GetOwnerById(request.ApartmentDto.OwnerId, cancellationToken);
+            var apartmentId = request.ApartmentDetailDto is ApartmentDto dto ? dto.OwnerId : Guid.Empty;
+            var apartment = await _repository.GetById(request.ApartmentDetailDto.OwnerId);
+
+            var apartmentOwner = await _repository.GetOwnerById(request.ApartmentDetailDto.OwnerId, cancellationToken);
             if(apartmentOwner is null)
             {
                 throw new Exception("Owner of apartment not found!");
             }
 
-            var uniqueApartment = await _repository.IsApartmentNameUnique(request.ApartmentDto.Name, cancellationToken);
+            var uniqueApartment = await _repository.IsApartmentNameUnique(request.ApartmentDetailDto.Name, cancellationToken);
             if (!uniqueApartment)
             {
                 throw new Exception("Apartment name must be unique!");
             }
-            var apartment = Apartment.Create(request.ApartmentDto, apartmentOwner);
-            await _repository.Add(apartment);
+
+            apartment.UpdateApartment(
+                request.ApartmentDetailDto.Name,
+                request.ApartmentDetailDto.Address,
+                request.ApartmentDetailDto.Price,
+                request.ApartmentDetailDto.Description,
+                request.ApartmentDetailDto.CleaningFee,
+                request.ApartmentDetailDto.Amenities);
+            await _repository.Update(apartment);
             return apartment.Id;
         }
     }
