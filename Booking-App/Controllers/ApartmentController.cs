@@ -2,6 +2,7 @@
 using Booking.Application.Features.Apartments.Commands.DeleteApartment;
 using Booking.Application.Features.Apartments.Commands.UpdateApartment;
 using Booking.Application.Features.Apartments.Queries.Get;
+using Booking.Application.Features.Apartments.Queries.GetAll;
 using Booking.Domain.Apartments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,14 @@ namespace Booking_App.Controllers
         public async Task<IResult> Get(Guid id)
         {
             var query = new GetApartmentQuery { Id = id };
+            var result = await _sender.Send(query);
+            return Results.Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IResult> GetAllApartments()
+        {
+            var query = new GetAllApartmentsQuery();
             var result = await _sender.Send(query);
             return Results.Ok(result);
         }
