@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Booking.Domain.Apartments;
 using Booking.Domain.Bookings;
 using Booking.Domain.Owners;
 using Booking.Domain.Reviews;
 using Booking.Domain.Users;
-
+using Booking.Domain.Photos;
 namespace Booking.Infrastructure
 {
     public class BookingContext : DbContext
@@ -17,12 +16,11 @@ namespace Booking.Infrastructure
         public DbSet<Owner> Owners { get; set; }
         public DbSet<BookingEntity> Bookings { get; set; }
         public DbSet<Review> Reviews { get; set; }
-
+        public DbSet<Photo> Photos {get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            //query: per tabelen user, indexi qe eshte kolona e-mail te jete gjithmone unik
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<Apartment>()
                 .HasOne(a => a.Owner)

@@ -10,6 +10,7 @@ namespace Booking.Application.Features.Apartments.Commands.UpdateApartment
 {
     public class UpdateApartmentCommand : IRequest<Guid>
     {
+        public Guid Id {get; set;}
         public ApartmentDetailDto ApartmentDetailDto { get; set; }
     }
 }

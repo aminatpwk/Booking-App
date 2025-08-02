@@ -29,7 +29,8 @@ namespace Booking.Application.Features.Apartments.Queries.Get
                 Description = apartment.Decription,
                 Address = apartment.Address,
                 Price = apartment.Price,
-                Amenities = apartment.Amenities?.ToList()
+                Amenities = apartment.Amenities?.ToList(),
+                OwnerId = apartment.OwnerId
             };
 
             return apartmentDetailDto;

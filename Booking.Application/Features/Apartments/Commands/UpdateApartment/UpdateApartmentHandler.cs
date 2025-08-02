@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace Booking.Application.Features.Apartments.Commands.UpdateApartment
 {
@@ -19,19 +20,25 @@ namespace Booking.Application.Features.Apartments.Commands.UpdateApartment
 
         public async Task<Guid> Handle(UpdateApartmentCommand request, CancellationToken cancellationToken)
         {
-            var apartmentId = request.ApartmentDetailDto is ApartmentDto dto ? dto.OwnerId : Guid.Empty;
-            var apartment = await _repository.GetById(request.ApartmentDetailDto.OwnerId);
+            var apartment = await _repository.GetById(request.Id);
+            if(apartment == null)
+            {
+                throw new Exception($"Apartment with ID {request.Id} not found!");
+            }
 
             var apartmentOwner = await _repository.GetOwnerById(request.ApartmentDetailDto.OwnerId, cancellationToken);
-            if(apartmentOwner is null)
+            if(apartmentOwner == null)
             {
                 throw new Exception("Owner of apartment not found!");
             }
 
-            var uniqueApartment = await _repository.IsApartmentNameUnique(request.ApartmentDetailDto.Name, cancellationToken);
-            if (!uniqueApartment)
+            if(apartment.Name != request.ApartmentDetailDto.Name)
             {
-                throw new Exception("Apartment name must be unique!");
+                var uniqueApartment = await _repository.IsApartmentNameUnique(request.ApartmentDetailDto.Name, cancellationToken);
+                if (!uniqueApartment)
+                {
+                    throw new Exception("Apartment name must be unique!");
+                }
             }
 
             apartment.UpdateApartment(

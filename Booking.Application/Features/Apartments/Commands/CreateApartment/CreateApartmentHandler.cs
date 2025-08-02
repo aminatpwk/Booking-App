@@ -27,16 +27,18 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
                 throw new ValidationException($"Validation failed: {errors}");
             }
 
+            var owner = await _apartmentRepository.GetOwnerById(request.ApartmentDto.OwnerId, cancellationToken);
+            if (owner is null)
+            {
+                throw new Exception("Owner with this ID does not exist!");
+            }
+
             var isUniqueApartment = await _apartmentRepository.IsApartmentNameUnique(request.ApartmentDto.Name, cancellationToken);
             if (!isUniqueApartment)
             {
                 throw new Exception("Apartment with this name already exists!");
             }
-            var owner = await _apartmentRepository.GetOwnerById(request.ApartmentDto.OwnerId, cancellationToken);
-            if(owner is null)
-            {
-                throw new Exception("Owner with this ID does not exist!");
-            }
+            
             var apartment = Apartment.Create(request.ApartmentDto, owner);
             await _apartmentRepository.Add(apartment);
             return apartment.Id;

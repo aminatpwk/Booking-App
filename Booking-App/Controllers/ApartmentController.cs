@@ -15,7 +15,6 @@ namespace Booking_App.Controllers
         [HttpPost]
         public async Task<IResult> Create([FromBody] ApartmentDto apartmentDto)
         {
-            //apartmentdto = dmth qe objektin qe kemi ne body do e vendosim aty
             var command = new CreateApartmentCommand { ApartmentDto = apartmentDto };
 
             //TO DO: duhet ti bejme handle result qe te ktheje ok ose status code tjeter
@@ -31,7 +30,7 @@ namespace Booking_App.Controllers
             return Results.Ok(result);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IResult> Delete(Guid id)
         {
             var command = new DeleteApartmentCommand { Id = id };
@@ -39,12 +38,15 @@ namespace Booking_App.Controllers
             return Results.Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IResult> Update([FromBody] ApartmentDetailDto apartmentDetailDto)
+        [HttpPut("{id}")]
+        public async Task<IResult> Update(Guid id, [FromBody] ApartmentDetailDto apartmentDetailDto)
         {
-            var command = new UpdateApartmentCommand { ApartmentDetailDto = apartmentDetailDto };
-            await _sender.Send(command);
-            return Results.NoContent();
+            var command = new UpdateApartmentCommand { 
+                Id = id,
+                ApartmentDetailDto = apartmentDetailDto 
+            };
+            var result = await _sender.Send(command);
+            return Results.Ok(result);
         }
     }
 }

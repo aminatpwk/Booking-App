@@ -13,6 +13,7 @@ namespace Booking.Application.Features.Apartments.Queries.Get
         public string Address { get; init; } 
         public decimal Price { get; init; }
         public decimal CleaningFee { get; init; }
+        public Guid OwnerId { get; init; }
         public List<Amenity> Amenities { get; init; } = [];
     }
 }
