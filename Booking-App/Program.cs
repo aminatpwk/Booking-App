@@ -5,6 +5,9 @@ using Booking.Application.Features.Owners.Commands;
 using Booking.Application.Features.Apartments.Queries.Get;
 using Booking.Application.Features.Apartments.Commands.DeleteApartment;
 using Booking.Application.Features.Apartments.Commands.UpdateApartment;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,17 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     typeof(DeleteApartmentHandler).Assembly,   
     typeof(UpdateApartmentHandler).Assembly    
 ));
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:SecretKey"]!))
+    };
+});
 builder.Services.AddAuthorization();
 
 var app = builder.Build();  
@@ -31,6 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

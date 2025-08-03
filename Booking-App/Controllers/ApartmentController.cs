@@ -5,6 +5,7 @@ using Booking.Application.Features.Apartments.Queries.Get;
 using Booking.Application.Features.Apartments.Queries.GetAll;
 using Booking.Domain.Apartments;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Booking_App.Controllers
@@ -13,7 +14,7 @@ namespace Booking_App.Controllers
     [ApiController]
     public class ApartmentController(ISender _sender) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Owner")]
         public async Task<IResult> Create([FromBody] ApartmentDto apartmentDto)
         {
             var command = new CreateApartmentCommand { ApartmentDto = apartmentDto };
@@ -39,7 +40,7 @@ namespace Booking_App.Controllers
             return Results.Ok(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Owner")]
         public async Task<IResult> Delete(Guid id)
         {
             var command = new DeleteApartmentCommand { Id = id };
@@ -47,7 +48,7 @@ namespace Booking_App.Controllers
             return Results.Ok(result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Owner")]
         public async Task<IResult> Update(Guid id, [FromBody] ApartmentDetailDto apartmentDetailDto)
         {
             var command = new UpdateApartmentCommand { 
