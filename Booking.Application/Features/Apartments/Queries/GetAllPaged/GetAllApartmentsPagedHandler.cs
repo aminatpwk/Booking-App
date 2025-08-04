@@ -45,11 +45,19 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
             {
                 OwnerId = apartment.OwnerId,
                 Name = apartment.Name,
+                Country = apartment.Country,
+                City = apartment.City,
                 Address = apartment.Address,
                 Price = apartment.Price,
                 Description = apartment.Decription,
                 CleaningFee = apartment.CleaningFee,
-                Amenities = apartment.Amenities.ToList()
+                Bedrooms = apartment.Bedrooms,
+                Bathrooms = apartment.Bathrooms,
+                MaxGuests = apartment.MaxGuests,
+                Type = apartment.Type,
+                Amenities = apartment.Amenities.ToList(),
+                IsActive = apartment.IsActive,
+                IsAvailable = apartment.IsAvailable
             }).ToList();
 
             return new PagedResult<ApartmentDto>(apartmentDto, request.PageIndex, request.PageSize, totalCount);

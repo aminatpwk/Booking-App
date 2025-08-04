@@ -43,11 +43,19 @@ namespace Booking.Application.Features.Apartments.Commands.UpdateApartment
 
             apartment.UpdateApartment(
                 request.ApartmentDetailDto.Name,
+                request.ApartmentDetailDto.Country,
+                request.ApartmentDetailDto.City,
                 request.ApartmentDetailDto.Address,
                 request.ApartmentDetailDto.Price,
                 request.ApartmentDetailDto.Description,
                 request.ApartmentDetailDto.CleaningFee,
-                request.ApartmentDetailDto.Amenities);
+                request.ApartmentDetailDto.Bathrooms,
+                request.ApartmentDetailDto.Bedrooms,
+                request.ApartmentDetailDto.MaxGuests,
+                request.ApartmentDetailDto.Type,
+                request.ApartmentDetailDto.Amenities,
+                request.ApartmentDetailDto.IsActive,
+                request.ApartmentDetailDto.IsAvailable);
             await _repository.Update(apartment);
             return apartment.Id;
         }

@@ -26,10 +26,19 @@ namespace Booking.Application.Features.Apartments.Queries.Get
             var apartmentDetailDto = new ApartmentDetailDto
             {
                 Name = apartment.Name,
+                Country = apartment.Country,
+                City = apartment.City,
                 Description = apartment.Decription,
                 Address = apartment.Address,
                 Price = apartment.Price,
+                CleaningFee = apartment.CleaningFee,
+                Bedrooms = apartment.Bedrooms,
+                Bathrooms = apartment.Bathrooms,
+                MaxGuests = apartment.MaxGuests,
+                Type = apartment.Type,
                 Amenities = apartment.Amenities?.ToList(),
+                IsActive = apartment.IsActive,
+                IsAvailable = apartment.IsAvailable,
                 OwnerId = apartment.OwnerId
             };
 
