@@ -1,0 +1,20 @@
+﻿using Booking.Application.Common.Model;
+using Booking.Domain.Apartments;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
+{
+    public class GetAllApartmentsPagedQuery : IRequest<PagedResult<ApartmentDto>>
+    {
+        public int PageIndex { get; set; } = 0;
+        public int PageSize { get; set; } = 10;
+        public string? SortBy { get; set; } = "Price";
+        public bool SortDescending { get; set; } = false;
+        public string? SearchTerm { get; set; } 
+    }
+}

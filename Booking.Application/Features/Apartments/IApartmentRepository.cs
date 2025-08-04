@@ -12,5 +12,12 @@ namespace Booking.Application.Features.Apartments
     {
         Task<bool> IsApartmentNameUnique(string name, CancellationToken cancellationToken);
         Task<Owner> GetOwnerById(Guid ownerId, CancellationToken cancellationToken);
+        Task<(List<Apartment> apartments, int totalCount)> GetPagedAsync(
+            int pageIndex,
+            int pageSize,
+            string? sortBy = null,
+            bool sortDescending = false,
+            string? searchTerm = null,
+            CancellationToken cancellationToken = default);
     }
 }

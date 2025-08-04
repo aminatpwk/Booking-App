@@ -177,7 +177,7 @@ namespace Booking.Infrastructure.Migrations
 
                     b.HasIndex("ApartmentId");
 
-                    b.ToTable("Photo");
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("Booking.Domain.Reviews.Review", b =>

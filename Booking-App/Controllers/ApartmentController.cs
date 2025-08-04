@@ -3,6 +3,7 @@ using Booking.Application.Features.Apartments.Commands.DeleteApartment;
 using Booking.Application.Features.Apartments.Commands.UpdateApartment;
 using Booking.Application.Features.Apartments.Queries.Get;
 using Booking.Application.Features.Apartments.Queries.GetAll;
+using Booking.Application.Features.Apartments.Queries.GetAllPaged;
 using Booking.Domain.Apartments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -36,6 +37,27 @@ namespace Booking_App.Controllers
         public async Task<IResult> GetAllApartments()
         {
             var query = new GetAllApartmentsQuery();
+            var result = await _sender.Send(query);
+            return Results.Ok(result);
+        }
+
+        [HttpGet("paged")]
+        public async Task<IResult> GetAllApartmentsPaged(
+            [FromQuery] int pageIndex = 0,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? sortBy = "Price",
+            [FromQuery] bool sortDescending = false,
+            [FromQuery] string? searchTerm = null)
+        {
+            var query = new GetAllApartmentsPagedQuery
+            {
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                SortBy = sortBy,
+                SortDescending = sortDescending,
+                SearchTerm = searchTerm
+            };
+
             var result = await _sender.Send(query);
             return Results.Ok(result);
         }

@@ -28,11 +28,11 @@ public class Apartment
     public decimal CleaningFee { get; private set; }
     public DateTime? LastBookedOnUtc { get; private set; }
 
-    public virtual ICollection<Amenity> Amenities { get; private set; } = [];
-    public virtual ICollection<Photo> Photos { get; } = [];
+    public virtual ICollection<Amenity> Amenities { get; set; } = [];
+    public virtual ICollection<Photo> Photos { get; set; } = [];
 
-    public Guid OwnerId { get; private set; }
-    public Owner Owner { get; private set; }
+    public Guid OwnerId { get; set; }
+    public Owner Owner { get; set; }
 
     public static Apartment Create(ApartmentDto apartmentdto, Owner owner)
     {

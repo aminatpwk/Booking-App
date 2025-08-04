@@ -21,6 +21,23 @@ namespace Booking.Infrastructure.Apartments
             var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == ownerId, cancellationToken);
             return owner ?? throw new Exception("Owner with this ID does not exist!");
         }
+
+        public async Task<(List<Apartment> apartments, int totalCount)> GetPagedAsync(
+            int pageIndex,
+            int pageSize,
+            string? sortBy = null,
+            bool sortDescending = false,
+            string? searchTerm = null,
+            CancellationToken cancellationToken = default)
+        {
+            var query = _context.Apartments.AsQueryable();
+            var totalCount = await query.CountAsync(cancellationToken);
+            var apartments = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync(cancellationToken);
+
+            return (apartments, totalCount);
+        }
+
+        //TO DO: apply sorting
     }
 }
 

@@ -6,6 +6,7 @@ using Booking.Domain.Owners;
 using Booking.Domain.Reviews;
 using Booking.Domain.Users;
 using Booking.Domain.Photos;
+using Booking.Domain.Apartments;
 namespace Booking.Infrastructure
 {
     public class BookingContext : DbContext
@@ -17,6 +18,7 @@ namespace Booking.Infrastructure
         public DbSet<BookingEntity> Bookings { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Photo> Photos {get; set; }
+        //public DbSet<Amenity> Amenities { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
