@@ -12,11 +12,13 @@ namespace Booking.Domain.Photos
     {
         [Key]
         public Guid Id { get; set; }
+
+        [Required]
         public Guid ApartmentId { get; set; }
         public Apartment Apartment { get; set; }
 
-        //alternative: mund te ruhet dhe si vektor bytesh dhe pastaj te konvertohet ne base64 per tu cuar ne frontend
-        public string ImageBase64 { get; set; }
+        //ruhet si vektor bytesh pastaj konvertohet ne base64 per tu cuar ne frontend
+        public byte[] ImageData { get; set; }
         public string ImageName { get; set; }
         public string ImageType { get; set; }
         public DateTime CreatedAt { get; set; }

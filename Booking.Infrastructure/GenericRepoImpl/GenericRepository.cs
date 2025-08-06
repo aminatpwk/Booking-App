@@ -53,5 +53,10 @@ namespace Booking.Infrastructure.GenericRepoImpl
 
             await context.SaveChangesAsync();
         }
+
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

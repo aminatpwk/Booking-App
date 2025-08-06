@@ -14,6 +14,8 @@ using Booking.Infrastructure.Owners;
 using Booking.Application.Features.Owners.Commands;
 using Booking.Application.Features.Users.Auth;
 using Booking.Infrastructure.Users.AuthImpl;
+using Booking.Application.Features.Photos;
+using Booking.Infrastructure.Photos;
 
 namespace Booking.Infrastructure
 {
@@ -41,6 +43,8 @@ namespace Booking.Infrastructure
             services.AddScoped<CreateOwnerValidations>();
 
             services.AddScoped<IAuthService, AuthService>();
+
+            services.AddScoped<IPhotosRepository, PhotosRepository>();
             return services;
 
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,9 @@ namespace Booking.Domain.Apartments
         public List<Amenity> Amenities { get; init; } = [];
         public bool IsActive { get; init; } = true; 
         public bool IsAvailable { get; init; } = true;
+
+        [MinLength(4, ErrorMessage = "At least 4 property images should be uploaded!")]
+        public IReadOnlyList<string> ImagesBase64 { get; init; } = new List<string>();
 
     }
 }
