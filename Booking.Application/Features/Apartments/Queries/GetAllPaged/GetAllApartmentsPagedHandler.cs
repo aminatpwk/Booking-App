@@ -41,6 +41,17 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
                 request.SortDescending,
                 request.SearchTerm,
                 cancellationToken);
+
+            if (!string.IsNullOrEmpty(request.SearchTerm))
+            {
+                //TO DO: me rregullu pjesen e ToList, si ne notes
+                apartments = apartments.Where(apartments =>
+                apartments.Country.Contains(request.SearchTerm) || apartments.City.Contains(request.SearchTerm) ||
+                apartments.Type.ToString().Contains(request.SearchTerm)).ToList();
+
+                totalCount = apartments.Count;
+            }
+
             var apartmentDto = apartments.Select(apartment => new ApartmentDto
             {
                 OwnerId = apartment.OwnerId,

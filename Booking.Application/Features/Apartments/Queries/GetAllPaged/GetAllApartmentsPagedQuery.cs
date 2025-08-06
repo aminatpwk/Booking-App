@@ -15,6 +15,13 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
         public int PageSize { get; set; } = 10;
         public string? SortBy { get; set; } = "Price";
         public bool SortDescending { get; set; } = false;
-        public string? SearchTerm { get; set; } 
+        public string? SearchTerm { get; set; }
+
+        public string Country { get; set; }
+        public string City { get; set; }
+        public ApartmentType Type { get; set; }
+        public decimal MinPrice { get; set; }
+        public decimal MaxPrice { get; set; }
+
     }
 }
