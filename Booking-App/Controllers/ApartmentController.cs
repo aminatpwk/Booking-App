@@ -42,22 +42,8 @@ namespace Booking_App.Controllers
         }
 
         [HttpGet("paged")]
-        public async Task<IResult> GetAllApartmentsPaged(
-            [FromQuery] int pageIndex = 0,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string? sortBy = "Price",
-            [FromQuery] bool sortDescending = false,
-            [FromQuery] string? searchTerm = null)
-        {
-            var query = new GetAllApartmentsPagedQuery
-            {
-                PageIndex = pageIndex,
-                PageSize = pageSize,
-                SortBy = sortBy,
-                SortDescending = sortDescending,
-                SearchTerm = searchTerm
-            };
-
+        public async Task<IResult> GetAllApartmentsPaged([FromQuery] GetAllApartmentsPagedQuery query)
+        { 
             var result = await _sender.Send(query);
             return Results.Ok(result);
         }

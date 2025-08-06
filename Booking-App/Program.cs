@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Booking.Application.Common.Exceptions;
+using Booking.Application.Features.Apartments.Queries.GetAllPaged;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     typeof(CreateOwnerHandler).Assembly,       
     typeof(GetApartmentHandler).Assembly,      
     typeof(DeleteApartmentHandler).Assembly,   
-    typeof(UpdateApartmentHandler).Assembly    
+    typeof(UpdateApartmentHandler).Assembly,
+    typeof(GetAllApartmentsPagedHandler).Assembly
 ));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

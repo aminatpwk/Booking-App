@@ -34,23 +34,19 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
                 request.PageSize = 10; 
             }
 
+
             var (apartments, totalCount) = await _repository.GetPagedAsync(
                 request.PageIndex,
                 request.PageSize,
-                request.SortBy,
-                request.SortDescending,
                 request.SearchTerm,
+                request.SortBy,
+                request.SortDescending, 
+                request.Country,
+                request.City,
+                request.Type,
+                request.MinPrice,
+                request.MaxPrice,
                 cancellationToken);
-
-            if (!string.IsNullOrEmpty(request.SearchTerm))
-            {
-                //TO DO: me rregullu pjesen e ToList, si ne notes
-                apartments = apartments.Where(apartments =>
-                apartments.Country.Contains(request.SearchTerm) || apartments.City.Contains(request.SearchTerm) ||
-                apartments.Type.ToString().Contains(request.SearchTerm)).ToList();
-
-                totalCount = apartments.Count;
-            }
 
             var apartmentDto = apartments.Select(apartment => new ApartmentDto
             {

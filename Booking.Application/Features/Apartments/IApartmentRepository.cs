@@ -15,9 +15,14 @@ namespace Booking.Application.Features.Apartments
         Task<(List<Apartment> apartments, int totalCount)> GetPagedAsync(
             int pageIndex,
             int pageSize,
+            string? searchTerm = null,
             string? sortBy = null,
             bool sortDescending = false,
-            string? searchTerm = null,
+            string? country = null,
+            string? city = null,
+            ApartmentType? type = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null,
             CancellationToken cancellationToken = default);
     }
 }

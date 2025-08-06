@@ -25,19 +25,68 @@ namespace Booking.Infrastructure.Apartments
         public async Task<(List<Apartment> apartments, int totalCount)> GetPagedAsync(
             int pageIndex,
             int pageSize,
+            string? searchTerm = null,
             string? sortBy = null,
             bool sortDescending = false,
-            string? searchTerm = null,
+            string? country = null,
+            string? city = null,
+            ApartmentType? type = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null,
             CancellationToken cancellationToken = default)
         {
             var query = _context.Apartments.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(a =>
+                a.Name.Contains(searchTerm) ||
+                a.Country.Contains(searchTerm) ||
+                a.City.Contains(searchTerm));
+            }
+
+            if(!string.IsNullOrWhiteSpace(country))
+            {
+                query = query.Where(a => a.Country.Contains(country));
+            }
+
+            if(!string.IsNullOrWhiteSpace(city))
+            {
+                query = query.Where(a => a.City.Contains(city));
+            }
+
+            if(type.HasValue)
+            {
+                query = query.Where(a => a.Type == type.Value);
+            }
+
+            if(minPrice.HasValue)
+            {
+                query = query.Where(a => a.Price >= minPrice.Value);
+            }
+
+            if(maxPrice.HasValue)
+            {
+                query = query.Where(a => a.Price <= maxPrice.Value);
+            }
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                if (sortBy.Equals("Price", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = sortDescending ? query.OrderByDescending(a => a.Price) : query.OrderBy(a => a.Price);
+                }
+                else
+                {
+                    query = query.OrderBy(a => a.Id);
+                }
+            }
+
             var totalCount = await query.CountAsync(cancellationToken);
             var apartments = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync(cancellationToken);
 
             return (apartments, totalCount);
         }
 
-        //TO DO: apply sorting
     }
 }
 
