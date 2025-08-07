@@ -19,13 +19,8 @@ namespace Booking.Infrastructure.Users.AuthImpl
             _context = context;
         }
 
-        public async Task<string> GenerateToken(User user)
+        public async Task<string> GenerateToken(User user, string role)
         {
-            user = await _context.Users
-                .Include(u => u.Owner)
-                .FirstOrDefaultAsync(u => u.Id == user.Id);
-            var role = user.Owner is not null ? "Owner" : "User";
-
             string secretKey = _configuration.GetSection("JwtConfig").GetSection("SecretKey").Value;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var expirationTime = _configuration.GetSection("JwtConfig").GetSection("lifetime").Value;

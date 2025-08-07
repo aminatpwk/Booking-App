@@ -21,7 +21,7 @@ namespace Booking.Infrastructure.Users
 
         public async Task<User> GetUserByEmail(string email, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            var user = await _context.Users.Include(u => u.Owner).FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
             return user;
         }
     }

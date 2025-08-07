@@ -35,7 +35,12 @@ namespace Booking.Application.Features.Users.Login
                 throw new UnauthorizedAccessException("Invalid email or password");
             }
 
-            var token = await _authService.GenerateToken(user);
+            if (loggedUserDto.Role == "Owner" && user.Owner == null)
+            {
+                throw new UnauthorizedAccessException("You do not have Owner role.");
+            }
+
+            var token = await _authService.GenerateToken(user, loggedUserDto.Role);
 
             return token;
         }

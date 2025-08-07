@@ -10,5 +10,7 @@ namespace Booking.Application.Features.Users.Login
 
         [Required]
         public string Password { get; init; }
+        [Required]
+        public string Role { get; init; }
     }
 }
