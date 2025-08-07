@@ -16,6 +16,9 @@ using Booking.Application.Features.Users.Auth;
 using Booking.Infrastructure.Users.AuthImpl;
 using Booking.Application.Features.Photos;
 using Booking.Infrastructure.Photos;
+using Booking.Application.Features.Emails;
+using Booking.Infrastructure.Emails;
+using Booking.Application.Common.Model;
 
 namespace Booking.Infrastructure
 {
@@ -45,6 +48,9 @@ namespace Booking.Infrastructure
             services.AddScoped<IAuthService, AuthService>();
 
             services.AddScoped<IPhotosRepository, PhotosRepository>();
+
+            services.AddTransient<IEmailService, EmailService>();
+            services.Configure<EmailSenderOptions>(configuration.GetSection("EmailSettings"));
             return services;
 
         }
