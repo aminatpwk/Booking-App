@@ -1,6 +1,7 @@
 ﻿using Booking.Domain.Apartments;
 using Booking.Domain.Owners;
 using Booking.Domain.Photos;
+using Booking.Domain.Reviews;
 using System.ComponentModel.DataAnnotations;
 
 public class Apartment
@@ -60,6 +61,7 @@ public class Apartment
     public ApartmentType Type { get; private set; }
     public virtual ICollection<Amenity> Amenities { get; set; } = [];
     public virtual ICollection<Photo> Photos { get; set; } = [];
+    public virtual ICollection<Review>? Reviews { get; set; } = [];
     public bool IsActive { get; set; } = true;
     public bool IsAvailable { get; set; } = true;
     

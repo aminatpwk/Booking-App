@@ -23,7 +23,6 @@ namespace Booking.Domain.Bookings
         [ForeignKey(nameof(User))]
         public Guid UserId { get; private set; }
         public User User { get; private set; }
-        public Review Review { get; private set; }
         public DateTime Start { get; private set; }
         public DateTime End { get; private set; }
         public decimal PriceForPeriod { get; private set; }

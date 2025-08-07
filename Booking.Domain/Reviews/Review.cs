@@ -14,9 +14,9 @@ namespace Booking.Domain.Reviews
         [Key]
         public Guid Id { get; set; }
 
-        [ForeignKey(nameof(Booking))]
-        public Guid BookingId { get; private set; }
-        public BookingEntity Booking { get; private set; }
+        [ForeignKey(nameof(Apartment))]
+        public Guid ApartmentId { get; private set; }
+        public Apartment Apartment { get; set; }
         public int Rating { get; private set; } 
         public string? Comment { get; private set; }
         public DateTime CreatedOnUtc { get; private set; }
