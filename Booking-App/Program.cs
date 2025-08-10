@@ -8,9 +8,12 @@ using Booking.Application.Features.Apartments.Commands.UpdateApartment;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
 using Booking.Application.Common.Exceptions;
 using Booking.Application.Features.Apartments.Queries.GetAllPaged;
+using Booking.Application.Features.Photos.Commands.DeletePhotos;
+using Booking.Application.Features.Users;
+using Booking.Infrastructure.Users;
+using Booking.Application.Features.Reviews.Commands.CreateReview;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +28,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     typeof(GetApartmentHandler).Assembly,      
     typeof(DeleteApartmentHandler).Assembly,   
     typeof(UpdateApartmentHandler).Assembly,
-    typeof(GetAllApartmentsPagedHandler).Assembly
+    typeof(GetAllApartmentsPagedHandler).Assembly,
+    typeof(DeletePhotoHandler).Assembly,
+    typeof(CreateReviewHandler).Assembly
 ));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -39,6 +44,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();  
 

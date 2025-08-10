@@ -2,6 +2,7 @@
 using FluentValidation;
 using Booking.Domain.Photos;
 using Booking.Application.Features.Photos;
+
 namespace Booking.Application.Features.Apartments.Commands.CreateApartment
 {
     public class CreateApartmentHandler : IRequestHandler<CreateApartmentCommand, Guid>

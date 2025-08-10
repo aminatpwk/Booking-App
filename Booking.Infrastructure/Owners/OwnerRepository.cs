@@ -24,5 +24,10 @@ namespace Booking.Infrastructure.Owners
             var isUnique = await _context.Owners.Where(o => o.IdentityCardNumber == identitycardno).ToListAsync(cancellationToken);
             return !isUnique.Any();
         }
+
+        public async Task<Owner?> GetByUserId(Guid userId)
+        {
+            return await _context.Owners.FirstOrDefaultAsync(o => o.UserId == userId);
+        }
     }
 }

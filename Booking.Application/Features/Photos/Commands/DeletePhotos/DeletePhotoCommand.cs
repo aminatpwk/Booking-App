@@ -9,6 +9,6 @@ namespace Booking.Application.Features.Photos.Commands.DeletePhotos
 {
     public class DeletePhotoCommand : IRequest<Guid>
     {
-        public PhotoDto PhotoDto { get; set; }
+        public Guid Id { get; set; }
     }
 }

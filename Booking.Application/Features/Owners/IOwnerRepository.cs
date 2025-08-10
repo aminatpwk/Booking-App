@@ -11,5 +11,6 @@ namespace Booking.Application.Features.Owners
     public interface IOwnerRepository : IGenericRepository<Owner>
     {
         Task<bool> IsUniqueIdentityCardNumber(string identitycardno, CancellationToken cancellationToken);
+        Task<Owner?> GetByUserId(Guid userId);
     }
 }
