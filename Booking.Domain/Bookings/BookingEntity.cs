@@ -35,5 +35,24 @@ namespace Booking.Domain.Bookings
         public DateTime? RejectedOnUtc { get; private set; }
         public DateTime? CompletedOnUtc { get; private set; }
         public DateTime? CancelledOnUtc { get; private set; }
+
+        public static BookingEntity Create(Guid apartmentId, Guid userId, DateTime start, DateTime end, decimal priceForPeriod, decimal cleaningFee, decimal amenitiesUpCharge)
+        {
+            return new BookingEntity
+            {
+                Id = Guid.NewGuid(),
+                ApartmentId = apartmentId,
+                UserId = userId,
+                Start = start,
+                End = end,
+                PriceForPeriod = priceForPeriod,
+                CleaningFee = cleaningFee,
+                AmenitiesUpCharge = amenitiesUpCharge,
+                TotalPrice = priceForPeriod + cleaningFee + amenitiesUpCharge,
+                Status = BookingStatus.Reserved,
+                CreatedOnUtc = DateTime.UtcNow
+            };
+        }
     }
+
 }
