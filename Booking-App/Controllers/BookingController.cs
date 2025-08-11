@@ -1,12 +1,13 @@
 ﻿using Booking.Application.Common.DTOs;
 using Booking.Application.Features.Bookings.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Booking_App.Controllers
 {
     [Route("api/v1/[controller]")]
-    [ApiController]
+    [ApiController, Authorize(Roles ="User")]
     public class BookingController(ISender _sender) : ControllerBase
     {
         [HttpPost]
