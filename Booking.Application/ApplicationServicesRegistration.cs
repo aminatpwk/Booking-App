@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using FluentValidation;
+using MediatR;
+using Booking.Application.Common.Behaviors;
 
 namespace Booking.Application
 {
@@ -21,6 +24,10 @@ namespace Booking.Application
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
+
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FluentValidationBehavior<,>));
+            services.AddHttpContextAccessor();
             return services;
         }
     }

@@ -53,7 +53,8 @@ namespace Booking.Application.Common.Exceptions
 
         private Error MapExceptionToError(Exception ex) => ex switch
         {
-            ValidationException ve => Error.BadRequest("ValidationError", ve.Message),
+            FluentValidation.ValidationException fve => Error.BadRequest("ValidationError", FormatFluentValidationErrors(fve)),
+            System.ComponentModel.DataAnnotations.ValidationException ve => Error.BadRequest("ValidatioError", ve.Message),
             ArgumentNullException => Error.NullValue,
             KeyNotFoundException => Error.NotFound("KeyNotFound", ex.Message),
             UnauthorizedAccessException => Error.Unauthorized("Error.Unauthorized", "Access denied."),
@@ -69,5 +70,11 @@ namespace Booking.Application.Common.Exceptions
             ErrorType.Conflict => (int)HttpStatusCode.Conflict,
             _=> (int)HttpStatusCode.InternalServerError
         };
+
+        private string FormatFluentValidationErrors(FluentValidation.ValidationException exception)
+        {
+            var errors = exception.Errors.GroupBy(e => e.PropertyName).Select(g => $"{g.Key}: {string.Join(", ", g.Select(e => e.ErrorMessage))}");
+            return string.Join(" | ", errors);
+        }
     }
 }

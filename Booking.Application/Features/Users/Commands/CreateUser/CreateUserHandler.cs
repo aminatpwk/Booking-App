@@ -7,23 +7,14 @@ namespace Booking.Application.Features.Users.Commands.CreateUser
     public class CreateUserHandler : IRequestHandler<CreateUserCommand, Guid>
     {
         private readonly IUserRepository _userRepository;
-        private readonly CreateUserValidations _validations;
 
-        public CreateUserHandler(IUserRepository userRepository, CreateUserValidations validations)
+        public CreateUserHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _validations = validations;
         }
 
         public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var isValidResult = await _validations.ValidateAsync(request, cancellationToken);
-            if (!isValidResult.IsValid)
-            {
-                var errors = string.Join(", ", isValidResult.Errors.Select(e => e.ErrorMessage));
-                throw new ValidationException($"Validation failed: {errors}");
-            }
-
             var isUniqueUser = await _userRepository.IsEmailUnique(request.UserDto.Email, cancellationToken);
             if (!isUniqueUser)
             {

@@ -21,6 +21,7 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
             RuleFor(x => x.ApartmentDto.Address)
                 .NotEmpty().WithMessage("Apartment address is required.")
                 .MaximumLength(200).WithMessage("Apartment address must not exceed 200 characters.");
+            RuleFor(x => x.ApartmentDto.ImagesBase64).NotNull().WithMessage("You must upload images for the apartment!").Must(images => images != null && images.Count >= 4).WithMessage("You should upload at least 4 images per property!");
         }
     }
 }

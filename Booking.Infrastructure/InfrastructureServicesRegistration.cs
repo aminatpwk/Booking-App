@@ -26,6 +26,7 @@ using Booking.Application.Features.Reviews.Commands.CreateReview;
 using Booking.Application.Features.Bookings;
 using Booking.Infrastructure.Bookings;
 using Booking.Application;
+using Booking.Application.Features.Bookings.Commands;
 
 namespace Booking.Infrastructure
 {
@@ -63,7 +64,7 @@ namespace Booking.Infrastructure
             services.AddScoped<CreateReviewValidations>();
 
             services.AddScoped<IBookingRepository, BookingRepository>();
-
+            services.AddScoped<CreateBookingValidations>();
             services.AddApplicationConfigurations();
             return services;
 

@@ -9,23 +9,14 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
     {
         private readonly IApartmentRepository _apartmentRepository;
         private readonly IPhotosRepository _photosRepository;
-        private readonly CreateApartmentValidations _validations;
         public CreateApartmentHandler(IApartmentRepository apartmentRepository, IPhotosRepository photosRepository)
         {
             _apartmentRepository = apartmentRepository;
             _photosRepository = photosRepository;
-            _validations = new CreateApartmentValidations();
         }
 
         public async Task<Guid> Handle(CreateApartmentCommand request, CancellationToken cancellationToken)
-        {
-            var isValidResult = await _validations.ValidateAsync(request, cancellationToken);
-            if (!isValidResult.IsValid)
-            {
-                var errors = string.Join(", ", isValidResult.Errors.Select(e => e.ErrorMessage));
-                throw new ValidationException($"Validation failed: {errors}");
-            }
-
+        { 
             var owner = await _apartmentRepository.GetOwnerById(request.ApartmentDto.OwnerId, cancellationToken);
             if (owner is null)
             {
