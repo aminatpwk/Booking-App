@@ -41,7 +41,7 @@ namespace Booking.Application.Features.Photos.Commands.DeletePhotos
             }
 
             var currentUserId = _currentUserService.UserId;
-            Debug.WriteLine($"UserId from token: {currentUserId}");
+            //Debug.WriteLine($"UserId from token: {currentUserId}");
 
             var owner = await _ownerRepository.GetByUserId(currentUserId);
             if(owner is null)

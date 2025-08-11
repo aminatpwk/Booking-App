@@ -19,6 +19,10 @@ using Booking.Infrastructure.Photos;
 using Booking.Application.Features.Emails;
 using Booking.Infrastructure.Emails;
 using Booking.Application.Common.Model;
+using Booking.Application.Features.Reviews;
+using Booking.Domain.Reviews;
+using Booking.Infrastructure.Reviews;
+using Booking.Application.Features.Reviews.Commands.CreateReview;
 
 namespace Booking.Infrastructure
 {
@@ -51,6 +55,9 @@ namespace Booking.Infrastructure
 
             services.AddTransient<IEmailService, EmailService>();
             services.Configure<EmailSenderOptions>(configuration.GetSection("EmailSettings"));
+
+            services.AddScoped<IReviewRepository, ReviewRepository>();
+            services.AddScoped<CreateReviewValidations>();
             return services;
 
         }
