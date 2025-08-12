@@ -1,5 +1,5 @@
-﻿using Booking.Domain.Users;
-using MediatR;
+﻿using MediatR;
+using Booking.Application.Common.DTOs;
 
 namespace Booking.Application.Features.Users.Commands.CreateUser
 {

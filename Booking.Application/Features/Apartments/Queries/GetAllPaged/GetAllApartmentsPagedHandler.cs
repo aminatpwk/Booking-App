@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using Booking.Application.Common.DTOs;
 using Booking.Application.Common.Model;
 using Booking.Domain.Apartments;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +14,11 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
     public class GetAllApartmentsPagedHandler : IRequestHandler<GetAllApartmentsPagedQuery, PagedResult<ApartmentDto>>
     {
         private readonly IApartmentRepository _repository;
-        public GetAllApartmentsPagedHandler(IApartmentRepository repository)
+        private readonly IMapper _mapper;
+        public GetAllApartmentsPagedHandler(IApartmentRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<PagedResult<ApartmentDto>> Handle(GetAllApartmentsPagedQuery request, CancellationToken cancellationToken)
@@ -48,24 +52,7 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
                 request.MaxPrice,
                 cancellationToken);
 
-            var apartmentDto = apartments.Select(apartment => new ApartmentDto
-            {
-                OwnerId = apartment.OwnerId,
-                Name = apartment.Name,
-                Country = apartment.Country,
-                City = apartment.City,
-                Address = apartment.Address,
-                Price = apartment.Price,
-                Description = apartment.Decription,
-                CleaningFee = apartment.CleaningFee,
-                Bedrooms = apartment.Bedrooms,
-                Bathrooms = apartment.Bathrooms,
-                MaxGuests = apartment.MaxGuests,
-                Type = apartment.Type,
-                Amenities = apartment.Amenities.ToList(),
-                IsActive = apartment.IsActive,
-                IsAvailable = apartment.IsAvailable
-            }).ToList();
+            var apartmentDto = _mapper.Map<List<ApartmentDto>>(apartments);
 
             return new PagedResult<ApartmentDto>(apartmentDto, request.PageIndex, request.PageSize, totalCount);
         }

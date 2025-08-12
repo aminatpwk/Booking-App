@@ -69,28 +69,29 @@ public class Apartment
     public Guid OwnerId { get; set; }
     public Owner Owner { get; set; }
 
-    public static Apartment Create(ApartmentDto apartmentdto, Owner owner)
+    public static Apartment Create(Guid ownerId, string name, string country, string city, string address, decimal price, string description, decimal cleaningFee, int bedrooms, int bathrooms, int maxGuests, ApartmentType type, List<Amenity> amenities, bool isActive, bool isAvailable)
     {
         var id = Guid.NewGuid();
-        var apartment = new Apartment(
+        return new Apartment(
             id,
-            apartmentdto.Name,
-            apartmentdto.Country,
-            apartmentdto.City,
-            apartmentdto.Address,
-            apartmentdto.Price,
-            apartmentdto.Description,
-            apartmentdto.CleaningFee,
-            apartmentdto.Bedrooms,
-            apartmentdto.Bathrooms,
-            apartmentdto.MaxGuests,
-            apartmentdto.Type,
-            apartmentdto.Amenities,
-            apartmentdto.IsActive,
-            apartmentdto.IsAvailable,
-            owner.Id);
-        return apartment;
+            name,
+            country,
+            city,
+            address,
+            price,
+            description,
+            cleaningFee,
+            bedrooms,
+            bathrooms,
+            maxGuests,
+            type,
+            amenities,
+            isActive,
+            isAvailable,
+            ownerId
+        );
     }
+
 
     public void UpdateApartment(string name, string country, string city, string address, decimal price, string description, decimal cleaningfee, int bedrooms, int bathrooms, int maxGuests, ApartmentType type, List<Amenity> amenities, bool isActive, bool isAvailable)
     {

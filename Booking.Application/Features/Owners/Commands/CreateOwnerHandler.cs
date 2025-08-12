@@ -21,7 +21,9 @@ namespace Booking.Application.Features.Owners.Commands
 
         public async Task<Guid> Handle(CreateOwnerCommand request, CancellationToken cancellationToken)
         {
-            var owner = Owner.CreateOwner(request.OwnerDto);
+            var dto = request.OwnerDto;
+
+            var owner = Owner.CreateOwner(dto.UserId, dto.IdentityCardNumber, dto.BankAccount, dto.PhoneNumber);
             await _ownerRepository.Add(owner);
             return owner.Id;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booking.Domain.Users
+namespace Booking.Application.Common.DTOs
 {
     public class UserDto
     {

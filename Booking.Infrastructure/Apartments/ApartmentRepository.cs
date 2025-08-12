@@ -35,7 +35,10 @@ namespace Booking.Infrastructure.Apartments
             decimal? maxPrice = null,
             CancellationToken cancellationToken = default)
         {
-            var query = _context.Apartments.AsQueryable();
+            var query = _context.Apartments
+                .Include(a => a.Photos)
+                //.Include(a => a.Owner)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 query = query.Where(a =>

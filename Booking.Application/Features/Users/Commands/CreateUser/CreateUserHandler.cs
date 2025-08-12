@@ -1,16 +1,19 @@
 ﻿using MediatR;
 using Booking.Domain.Users;
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 
 namespace Booking.Application.Features.Users.Commands.CreateUser
 {
     public class CreateUserHandler : IRequestHandler<CreateUserCommand, Guid>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public CreateUserHandler(IUserRepository userRepository)
+        public CreateUserHandler(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -21,14 +24,8 @@ namespace Booking.Application.Features.Users.Commands.CreateUser
                 throw new Exception("User with this e-mail already exists!");
             }
 
-            var user = new User(
-                id: Guid.NewGuid(),
-                firstName: request.UserDto.FirstName,
-                lastName: request.UserDto.LastName,
-                email: request.UserDto.Email,
-                password: BCrypt.Net.BCrypt.HashPassword(request.UserDto.Password, 13),
-                createdOnUtc: DateTime.UtcNow
-            );
+            var user = _mapper.Map<User>(request.UserDto);
+            user.SetPassword(request.UserDto.Password);
 
             await _userRepository.Add(user);
             return user.Id;

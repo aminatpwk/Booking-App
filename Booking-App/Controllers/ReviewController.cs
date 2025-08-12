@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Booking.Domain.Reviews;
+using Booking.Application.Common.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Booking.Application.Features.Reviews.Commands.CreateReview;
 

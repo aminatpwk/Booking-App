@@ -2,6 +2,7 @@
 using FluentValidation;
 using Booking.Domain.Photos;
 using Booking.Application.Features.Photos;
+using AutoMapper;
 
 namespace Booking.Application.Features.Apartments.Commands.CreateApartment
 {
@@ -9,10 +10,12 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
     {
         private readonly IApartmentRepository _apartmentRepository;
         private readonly IPhotosRepository _photosRepository;
-        public CreateApartmentHandler(IApartmentRepository apartmentRepository, IPhotosRepository photosRepository)
+        private readonly IMapper _mapper;
+        public CreateApartmentHandler(IApartmentRepository apartmentRepository, IPhotosRepository photosRepository, IMapper mapper)
         {
             _apartmentRepository = apartmentRepository;
             _photosRepository = photosRepository;
+            _mapper = mapper;
         }
 
         public async Task<Guid> Handle(CreateApartmentCommand request, CancellationToken cancellationToken)
@@ -29,7 +32,9 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
                 throw new Exception("Apartment with this name already exists!");
             }
             
-            var apartment = Apartment.Create(request.ApartmentDto, owner);
+            var apartment = _mapper.Map<Apartment>(request.ApartmentDto);
+            apartment.OwnerId = owner.Id;
+            apartment.Owner = owner;
             await _apartmentRepository.Add(apartment);
 
             if(request.ApartmentDto.ImagesBase64 != null && request.ApartmentDto.ImagesBase64.Any())

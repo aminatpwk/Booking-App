@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BCrypt.Net;
 using Booking.Domain.Owners;
 
 namespace Booking.Domain.Users
@@ -33,11 +34,16 @@ namespace Booking.Domain.Users
             CreatedOnUtc = createdOnUtc;
         }
 
-        public static User CreateUser(UserDto userDto)
+        public static User CreateUser(string firstName, string lastName, string email, string password)
         {
             Guid UserId = Guid.NewGuid();
             DateTime createdOnUtc = DateTime.UtcNow;
-            return new User(UserId, userDto.FirstName, userDto.LastName, userDto.Email, userDto.Password, createdOnUtc);
+            return new User(UserId, firstName, lastName, email, password ,createdOnUtc);
+        }
+
+        public void SetPassword(string plainPassword)
+        {
+            Password = BCrypt.Net.BCrypt.HashPassword(plainPassword);
         }
     }
 }

@@ -37,11 +37,16 @@ namespace Booking.Domain.Owners
         public string PhoneNumber { get; private set; }
         public List<Apartment> Apartments { get; private set; } = [];
 
-        public static Owner CreateOwner(OwnerDto ownerdto)
+        public static Owner CreateOwner(Guid userId, string idcardno, string bankacc, string phoneno)
         {
             Guid OwnerId = Guid.NewGuid();
-            return new Owner(OwnerId, ownerdto.UserId, ownerdto.IdentityCardNumber, ownerdto.BankAccount, ownerdto.PhoneNumber);
+            return new Owner(OwnerId, userId, idcardno, bankacc, phoneno);
         }
+
+        //public void SetApartments(List<Apartment> apartments)
+        //{
+        //    Apartments = apartments;
+        //}
 
     }
 }

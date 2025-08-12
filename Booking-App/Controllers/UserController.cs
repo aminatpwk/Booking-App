@@ -1,5 +1,5 @@
 ﻿using Booking.Application.Features.Users.Commands.CreateUser;
-using Booking.Domain.Users;
+using Booking.Application.Common.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Booking.Application.Features.Users.Login;

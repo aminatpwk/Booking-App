@@ -4,7 +4,7 @@ using Booking.Application.Features.Apartments.Commands.UpdateApartment;
 using Booking.Application.Features.Apartments.Queries.Get;
 using Booking.Application.Features.Apartments.Queries.GetAll;
 using Booking.Application.Features.Apartments.Queries.GetAllPaged;
-using Booking.Domain.Apartments;
+using Booking.Application.Common.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

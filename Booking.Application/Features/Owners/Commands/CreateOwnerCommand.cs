@@ -1,4 +1,4 @@
-﻿using Booking.Domain.Owners;
+﻿using Booking.Application.Common.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
