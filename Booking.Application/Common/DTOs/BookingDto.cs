@@ -11,5 +11,8 @@ namespace Booking.Application.Common.DTOs
         public Guid ApartmentId { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public string Status { get; set; }
+        public decimal TotalPrice { get; set; }
+        public ApartmentDto Apartment { get; set; }
     }
 }

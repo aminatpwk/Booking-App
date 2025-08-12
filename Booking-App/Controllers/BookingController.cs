@@ -1,5 +1,6 @@
 ﻿using Booking.Application.Common.DTOs;
 using Booking.Application.Features.Bookings.Commands;
+using Booking.Application.Features.Bookings.Queries.GetAll;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,14 @@ namespace Booking_App.Controllers
             var command = new CreateBookingCommand { BookingDto = bookingDto };
             var result = await _sender.Send(command);
             return Results.Ok(result);
+        }
+
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyBookings()
+        {
+            var query = new GetAllBookingsQuery();
+            var result = await _sender.Send(query);
+            return Ok(result);
         }
     }
 }

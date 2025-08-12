@@ -15,6 +15,7 @@ using Booking.Application.Features.Users;
 using Booking.Infrastructure.Users;
 using Booking.Application.Features.Reviews.Commands.CreateReview;
 using Booking.Application.Features.Bookings.Commands;
+using Booking.Application.Features.Bookings.Queries.GetAll;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     typeof(GetAllApartmentsPagedHandler).Assembly,
     typeof(DeletePhotoHandler).Assembly,
     typeof(CreateReviewHandler).Assembly,
-    typeof(CreateBookingHandler).Assembly
+    typeof(CreateBookingHandler).Assembly,
+    typeof(GetAllBookingsHandler).Assembly
 ));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

@@ -12,6 +12,8 @@ namespace Booking.Infrastructure.Bookings
         public async Task<List<BookingEntity>> GetAllBookingsPerUser(Guid userId)
         {
             return await _context.Bookings
+                .Include(b => b.Apartment)
+                    .ThenInclude(a => a.Photos)
                 .Where(b => b.UserId == userId)
                 .ToListAsync();
         }
