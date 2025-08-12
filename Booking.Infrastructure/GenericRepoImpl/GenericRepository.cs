@@ -1,8 +1,10 @@
 ﻿using Booking.Application.Repositories;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,6 +59,11 @@ namespace Booking.Infrastructure.GenericRepoImpl
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return await context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
+        {
+            return await context.Set<T>().AnyAsync(predicate, cancellationToken);
         }
     }
 }
