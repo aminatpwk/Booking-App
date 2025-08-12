@@ -12,10 +12,10 @@ namespace Booking.Application.Features.Bookings.Commands
     {
         public CreateBookingValidations()
         {
-            RuleFor(x => x.BookingDto.ApartmentId).NotEmpty().WithMessage("ApartmentID is required!");
-            RuleFor(x => x.BookingDto.Start).LessThan(x => x.BookingDto.End).WithMessage("Start date must be before end date!");
-            RuleFor(x => x.BookingDto.End).GreaterThan(x => x.BookingDto.Start).WithMessage("End date must be after start date!");
-            RuleFor(x => x.BookingDto.Start).GreaterThanOrEqualTo(DateTime.UtcNow.Date).WithMessage("Start date cannot be in the past!");
+            RuleFor(x => x.CreateBookingDto.ApartmentId).NotEmpty().WithMessage("ApartmentID is required!");
+            RuleFor(x => x.CreateBookingDto.Start).LessThan(x => x.CreateBookingDto.End).WithMessage("Start date must be before end date!");
+            RuleFor(x => x.CreateBookingDto.End).GreaterThan(x => x.CreateBookingDto.Start).WithMessage("End date must be after start date!");
+            RuleFor(x => x.CreateBookingDto.Start).GreaterThanOrEqualTo(DateTime.UtcNow.Date).WithMessage("Start date cannot be in the past!");
         }
     }
 }

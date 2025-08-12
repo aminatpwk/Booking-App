@@ -29,6 +29,9 @@ namespace Booking.Infrastructure
                 .WithMany(o => o.Apartments)
                 .HasForeignKey(a => a.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<BookingEntity>()
+                .Property(b => b.Status)
+                .HasConversion<string>();
 
             base.OnModelCreating(modelBuilder);
         }

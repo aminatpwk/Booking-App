@@ -27,7 +27,7 @@ namespace Booking.Application.Features.Bookings.Commands
 
         public async Task<Guid> Handle(CreateBookingCommand command, CancellationToken cancellationToken)
         {
-            var bookingDto = command.BookingDto;
+            var bookingDto = command.CreateBookingDto;
             var userId = _currentUserService.UserId;
             var apartment = await _apartmentRepository.GetById(bookingDto.ApartmentId);
             if(apartment is null)

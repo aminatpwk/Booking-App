@@ -49,7 +49,7 @@ namespace Booking.Domain.Bookings
                 CleaningFee = cleaningFee,
                 AmenitiesUpCharge = amenitiesUpCharge,
                 TotalPrice = priceForPeriod + cleaningFee + amenitiesUpCharge,
-                Status = BookingStatus.Reserved,
+                Status = BookingStatus.PendingApproval,
                 CreatedOnUtc = DateTime.UtcNow
             };
         }

@@ -1,4 +1,4 @@
-﻿using Booking.Application.Common.DTOs;
+﻿using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Domain.Bookings;
 using MediatR;
 using System;
@@ -11,6 +11,6 @@ namespace Booking.Application.Features.Bookings.Commands
 {
     public class CreateBookingCommand : IRequest<Guid>
     {
-        public BookingDto BookingDto { get; set; }
+        public CreateBookingDto CreateBookingDto { get; set; }
     }
 }

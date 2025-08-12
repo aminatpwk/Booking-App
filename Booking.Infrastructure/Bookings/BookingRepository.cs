@@ -28,7 +28,7 @@ namespace Booking.Infrastructure.Bookings
 
         public async Task<bool> IsApartmentAvailable(Guid apartmentId, DateTime start, DateTime end)
         {
-            var overlappingBooking = await _context.Bookings.Where(b => b.ApartmentId == apartmentId && (b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Reserved)).Where(b => b.Start < end && b.End > start).AnyAsync();
+            var overlappingBooking = await _context.Bookings.Where(b => b.ApartmentId == apartmentId && (b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.PendingApproval)).Where(b => b.Start < end && b.End > start).AnyAsync();
             return !overlappingBooking;
         }
     }

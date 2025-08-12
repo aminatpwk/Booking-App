@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Booking.Application.Common.DTOs;
+using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Application.Features.Users;
 using MediatR;
 using System;

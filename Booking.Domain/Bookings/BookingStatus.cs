@@ -8,7 +8,7 @@ namespace Booking.Domain.Bookings
 {
     public enum BookingStatus
     {
-        Reserved = 1,
+        PendingApproval = 1,
         Confirmed,
         Rejected,
         Cancelled,

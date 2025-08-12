@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Booking.Application.Common.DTOs;
+using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Domain.Bookings;
 using Booking.Domain.Owners;
 using Booking.Domain.Photos;

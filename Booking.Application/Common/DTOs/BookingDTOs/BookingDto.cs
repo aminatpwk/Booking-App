@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booking.Application.Common.DTOs
+namespace Booking.Application.Common.DTOs.BookingDTOs
 {
+    //this dto is used for queries only
     public class BookingDto
     {
         public Guid ApartmentId { get; set; }

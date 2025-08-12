@@ -1,4 +1,4 @@
-﻿using Booking.Application.Common.DTOs;
+﻿using Booking.Application.Common.DTOs.BookingDTOs;
 using MediatR;
 using System;
 using System.Collections.Generic;
