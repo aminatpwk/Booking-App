@@ -18,7 +18,6 @@ using Booking.Application.Features.Photos;
 using Booking.Infrastructure.Photos;
 using Booking.Application.Features.Emails;
 using Booking.Infrastructure.Emails;
-using Booking.Application.Common.Model;
 using Booking.Application.Features.Reviews;
 using Booking.Domain.Reviews;
 using Booking.Infrastructure.Reviews;
@@ -27,6 +26,7 @@ using Booking.Application.Features.Bookings;
 using Booking.Infrastructure.Bookings;
 using Booking.Application;
 using Booking.Application.Features.Bookings.Commands;
+using Booking.Application.Common.Model.Email;
 
 namespace Booking.Infrastructure
 {
@@ -58,6 +58,7 @@ namespace Booking.Infrastructure
             services.AddScoped<IPhotosRepository, PhotosRepository>();
 
             services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<IEmailTemplateService, EmailTemplateService>();
             services.Configure<EmailSenderOptions>(configuration.GetSection("EmailSettings"));
 
             services.AddScoped<IReviewRepository, ReviewRepository>();
@@ -65,6 +66,7 @@ namespace Booking.Infrastructure
 
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<CreateBookingValidations>();
+
             services.AddApplicationConfigurations();
             return services;
 

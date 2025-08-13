@@ -45,8 +45,14 @@ namespace Booking.Application.Features.Bookings.Commands
             decimal cleaningFee = 5;
             decimal amenitiesUpCharge = 5;
             var bookingEntity = BookingEntity.Create(bookingDto.ApartmentId, userId, bookingDto.Start, bookingDto.End, priceForPeriod, cleaningFee, amenitiesUpCharge);
+
+            bookingEntity.GenerateConfirmationToken();
             await _bookingRepository.Add(bookingEntity);
+
+            //await SendConfirmationEmail(bookingEntity);
             return bookingEntity.Id;
         }
+
+
     }
 }

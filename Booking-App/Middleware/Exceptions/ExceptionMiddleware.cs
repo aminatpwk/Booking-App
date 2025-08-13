@@ -55,6 +55,7 @@ namespace Booking.Application.Common.Exceptions
         {
             FluentValidation.ValidationException fve => Error.BadRequest("ValidationError", FormatFluentValidationErrors(fve)),
             System.ComponentModel.DataAnnotations.ValidationException ve => Error.BadRequest("ValidatioError", ve.Message),
+            EmailSendException ese => Error.EmailSendError("Email.SendFailed", $"Failed to send email: {ese.Message}"),
             ArgumentNullException => Error.NullValue,
             KeyNotFoundException => Error.NotFound("KeyNotFound", ex.Message),
             UnauthorizedAccessException => Error.Unauthorized("Error.Unauthorized", "Access denied."),

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booking.Application.Common.Model
+namespace Booking.Application.Common.Model.Email
 {
     public class Email
     {

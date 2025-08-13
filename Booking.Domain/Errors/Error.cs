@@ -31,6 +31,10 @@ namespace Booking.Domain.Errors
         public static Error Failure(string code, string message) => new(code, message, ErrorType.Failure);
         public static Error Forbidden(string code, string message) => new(code, message, ErrorType.Forbidden);
 
-
+        public static Error EmailSendError(string message, string? recipient = null)
+        {
+            var fullMessage = recipient != null ? $"Failed to send email to {recipient}: {message}" : $"Failed to send email: {message}";
+            return new("Email.SendFailed", fullMessage, ErrorType.Failure);
+        }
     }
 }

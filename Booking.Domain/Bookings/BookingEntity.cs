@@ -30,6 +30,7 @@ namespace Booking.Domain.Bookings
         public decimal AmenitiesUpCharge { get; private set; }
         public decimal TotalPrice { get; private set; }
         public BookingStatus Status { get; private set; }
+        public string? ConfirmationToken { get; private set; }
         public DateTime CreatedOnUtc { get; private set; }
         public DateTime? ConfirmedOnUtc { get; private set; }
         public DateTime? RejectedOnUtc { get; private set; }
@@ -52,6 +53,45 @@ namespace Booking.Domain.Bookings
                 Status = BookingStatus.PendingApproval,
                 CreatedOnUtc = DateTime.UtcNow
             };
+        }
+
+        public void GenerateConfirmationToken()
+        {
+            ConfirmationToken = Guid.NewGuid().ToString();
+        }
+
+        public void Confirm()
+        {
+            if(Status != BookingStatus.PendingApproval)
+            {
+                throw new InvalidOperationException("Can only confirm pending bookings!");
+            }
+
+            Status = BookingStatus.Confirmed;
+            ConfirmedOnUtc = DateTime.UtcNow;
+            ConfirmationToken = null;
+        }
+
+        public void Reject()
+        {
+            Status = BookingStatus.Rejected;
+            RejectedOnUtc = DateTime.UtcNow;
+            ConfirmationToken = null;
+        }
+
+        public void Cancel()
+        {
+            Status = BookingStatus.Cancelled;
+            CancelledOnUtc = DateTime.UtcNow;
+        }
+
+        public void Complete()
+        {
+            if(Status == BookingStatus.Confirmed && End <= DateTime.UtcNow)
+            {
+                Status = BookingStatus.Completed;
+                CompletedOnUtc = DateTime.UtcNow;
+            }
         }
     }
 

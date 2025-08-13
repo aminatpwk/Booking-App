@@ -24,14 +24,23 @@ namespace Booking.Infrastructure
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            
             modelBuilder.Entity<Apartment>()
                 .HasOne(a => a.Owner)
                 .WithMany(o => o.Apartments)
                 .HasForeignKey(a => a.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<BookingEntity>()
                 .Property(b => b.Status)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<BookingEntity>()
+                .Property(b => b.ConfirmationToken)
+                .HasMaxLength(64);
+            modelBuilder.Entity<BookingEntity>()
+                .HasIndex(b => b.ConfirmationToken)
+                .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }
