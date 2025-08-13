@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Booking.Application.Features.Apartments;
+using Booking.Application.Features.Emails;
 using Booking.Application.Features.Users;
 using Booking.Domain.Bookings;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace Booking.Application.Features.Bookings.Commands
 {
@@ -17,12 +15,22 @@ namespace Booking.Application.Features.Bookings.Commands
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUserService;
         private readonly IApartmentRepository _apartmentRepository;
-        public CreateBookingHandler(IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IApartmentRepository apartmentRepository)
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _contextAccessor;
+        public CreateBookingHandler(IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IApartmentRepository apartmentRepository, IUserRepository userRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _bookingRepository = bookingRepository;
             _mapper = mapper;
             _currentUserService = currentUserService;
             _apartmentRepository = apartmentRepository;
+            _userRepository = userRepository;
+            _emailTemplateService = emailTemplateService;
+            _emailService = emailService;
+            _configuration = configuration;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<Guid> Handle(CreateBookingCommand command, CancellationToken cancellationToken)
@@ -49,10 +57,43 @@ namespace Booking.Application.Features.Bookings.Commands
             bookingEntity.GenerateConfirmationToken();
             await _bookingRepository.Add(bookingEntity);
 
-            //await SendConfirmationEmail(bookingEntity);
+            await SendConfirmationEmail(bookingEntity);
             return bookingEntity.Id;
         }
 
+        private async Task SendConfirmationEmail(BookingEntity booking)
+        {
+            try
+            {
+                var userEmail = _currentUserService.Email;
+               
+                if(userEmail == null)
+                {
+                    throw new Exception("User not found for booking confirmation email!");
+                }
 
+                var request = _contextAccessor.HttpContext?.Request;
+                var baseUrl = $"{request.Scheme}://{request?.Host}";
+                var confirmationUrl = $"{baseUrl}/api/v1/Booking/confirm/{booking.ConfirmationToken}";
+                var rejectionUrl = $"{baseUrl}/api/v1/Booking/reject/{booking.ConfirmationToken}";
+
+                var templateData = new Dictionary<string, object>
+                {
+                    {"ConfirmationUrl", confirmationUrl },
+                    {"RejectionUrl", rejectionUrl },
+                    {"StartDate", booking.Start.ToString("yyyy-MM-dd") },
+                    {"EndDate", booking.End.ToString("yyyy-MM-dd") },
+                    {"TotalPrice", booking.TotalPrice.ToString() }
+                };
+
+                var email = await _emailTemplateService.CreateEmailFromTemplateAsync(userEmail, "BookingConfirmation", templateData);
+
+                await _emailService.SendEmailAsync(email);
+
+            }catch(Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

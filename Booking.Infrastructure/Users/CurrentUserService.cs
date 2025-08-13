@@ -32,5 +32,14 @@ namespace Booking.Infrastructure.Users
                 return userId != null ? Guid.Parse(userId) : Guid.Empty;
             }
         }
+
+        public string Email
+        {
+            get
+            {
+                var email = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value;
+                return email ?? string.Empty;
+            }
+        }
     }
 }
