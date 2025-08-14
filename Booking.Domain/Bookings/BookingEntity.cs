@@ -31,6 +31,7 @@ namespace Booking.Domain.Bookings
         public decimal TotalPrice { get; private set; }
         public BookingStatus Status { get; private set; }
         public string? ConfirmationToken { get; private set; }
+        public DateTime ConfirmationTokenExpiration { get; private set; }
         public DateTime CreatedOnUtc { get; private set; }
         public DateTime? ConfirmedOnUtc { get; private set; }
         public DateTime? RejectedOnUtc { get; private set; }
@@ -58,6 +59,7 @@ namespace Booking.Domain.Bookings
         public void GenerateConfirmationToken()
         {
             ConfirmationToken = Guid.NewGuid().ToString();
+            ConfirmationTokenExpiration = DateTime.UtcNow.AddHours(24);
         }
 
         public void Confirm()
