@@ -75,12 +75,12 @@ namespace Booking.Application.Features.Bookings.Commands
                 var request = _contextAccessor.HttpContext?.Request;
                 var baseUrl = $"{request.Scheme}://{request?.Host}";
                 var confirmationUrl = $"{baseUrl}/api/v1/Booking/confirm/{booking.ConfirmationToken}";
-                var rejectionUrl = $"{baseUrl}/api/v1/Booking/reject/{booking.ConfirmationToken}";
+                var cancellationUrl = $"{baseUrl}/api/v1/Booking/cancel/{booking.ConfirmationToken}";
 
                 var templateData = new Dictionary<string, object>
                 {
                     {"ConfirmationUrl", confirmationUrl },
-                    {"RejectionUrl", rejectionUrl },
+                    {"CancellationUrl", cancellationUrl },
                     {"StartDate", booking.Start.ToString("yyyy-MM-dd") },
                     {"EndDate", booking.End.ToString("yyyy-MM-dd") },
                     {"TotalPrice", booking.TotalPrice.ToString() }

@@ -31,5 +31,10 @@ namespace Booking.Infrastructure.Bookings
             var overlappingBooking = await _context.Bookings.Where(b => b.ApartmentId == apartmentId && (b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.PendingApproval)).Where(b => b.Start < end && b.End > start).AnyAsync();
             return !overlappingBooking;
         }
+
+        public async Task<BookingEntity?> GetByConfirmationToken(string token)
+        {
+            return await _context.Bookings.FirstOrDefaultAsync(b => b.ConfirmationToken == token);
+        }
     }
 }
