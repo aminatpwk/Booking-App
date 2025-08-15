@@ -27,6 +27,8 @@ using Booking.Infrastructure.Bookings;
 using Booking.Application;
 using Booking.Application.Features.Bookings.Commands;
 using Booking.Application.Common.Model.Email;
+using Booking.Application.Common.Services;
+using Booking.Infrastructure.Services;
 
 namespace Booking.Infrastructure
 {
@@ -66,7 +68,7 @@ namespace Booking.Infrastructure
 
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<CreateBookingValidations>();
-
+            services.AddScoped<IBookingStatusUpdaterJob, BookingStatusUpdaterJob>();
             services.AddApplicationConfigurations();
             return services;
 

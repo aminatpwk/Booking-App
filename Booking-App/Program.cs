@@ -8,6 +8,7 @@ using Booking.Application.Features.Apartments.Commands.UpdateApartment;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Booking.Infrastructure.Services;
 using Booking.Application.Common.Exceptions;
 using Booking.Application.Features.Apartments.Queries.GetAllPaged;
 using Booking.Application.Features.Photos.Commands.DeletePhotos;
@@ -18,6 +19,8 @@ using Booking.Application.Features.Bookings.Commands;
 using Booking.Application.Features.Bookings.Queries.GetAll;
 using Booking.Application.Features.Bookings.Commands.ConfirmBooking;
 using Booking.Application.Features.Bookings.Commands.CancelBooking;
+using Hangfire;
+using Booking.Application.Common.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +57,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddHangfire(config =>
+{
+    config.UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<IBookingStatusUpdaterJob, BookingStatusUpdaterJob>();
 
 var app = builder.Build();  
 
@@ -67,5 +76,11 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHangfireDashboard("/hangfire");
+RecurringJob.AddOrUpdate<IBookingStatusUpdaterJob>(
+    "update-completed-bookings",
+    job => job.UpdateCompletedBookings(),
+    "1 0 * * *"
+    );
 app.MapControllers();
 app.Run();

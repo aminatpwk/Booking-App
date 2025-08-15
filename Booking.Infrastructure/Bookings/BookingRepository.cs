@@ -36,5 +36,11 @@ namespace Booking.Infrastructure.Bookings
         {
             return await _context.Bookings.FirstOrDefaultAsync(b => b.ConfirmationToken == token);
         }
+
+        public async Task<List<BookingEntity>> GetExpiredConfirmedBookings()
+        {
+            var currentDate = DateTime.UtcNow.Date;
+            return await _context.Bookings.Where(b => b.Status == BookingStatus.Confirmed && b.End < currentDate).ToListAsync();
+        }
     }
 }

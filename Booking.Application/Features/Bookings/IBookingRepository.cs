@@ -10,5 +10,6 @@ namespace Booking.Application.Features.Bookings
         Task<BookingEntity?> GetLastBooking(Guid userId, Guid apartmentId);
         Task<bool> IsApartmentAvailable(Guid apartmentId, DateTime start, DateTime end);
         Task<BookingEntity?> GetByConfirmationToken(string token);
+        Task<List<BookingEntity>> GetExpiredConfirmedBookings();
     }
 }
