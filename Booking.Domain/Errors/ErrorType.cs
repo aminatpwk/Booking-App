@@ -13,6 +13,9 @@ namespace Booking.Domain.Errors
         NotFound,
         Conflict,
         Unauthorized,
-        Forbidden
+        Forbidden,
+        Validation,
+        Database, 
+        ExternalService
     }
 }

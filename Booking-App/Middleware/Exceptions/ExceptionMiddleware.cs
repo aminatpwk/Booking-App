@@ -32,19 +32,14 @@ namespace Booking.Application.Common.Exceptions
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, "An unhandled exception occurred while processing the request.");
+                _logger.LogError(ex, "An unhandled exception occurred while processing the request.", context.Request.Path, context.Request.Method);
                 var error = MapExceptionToError(ex);
                 var statusCode = MapErrorTypeToStatusCode(error.Type);
 
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = statusCode;
 
-                var response = new
-                {
-                    error.Code,
-                    error.Message,
-                    error.Type
-                };
+                var response = CreateErrorResponse(error, ex);
 
                 var json = JsonSerializer.Serialize(response);
                 await context.Response.WriteAsync(json);
@@ -69,6 +64,8 @@ namespace Booking.Application.Common.Exceptions
             ErrorType.Unauthorized => (int)HttpStatusCode.Unauthorized,
             ErrorType.Forbidden => (int)HttpStatusCode.Forbidden,
             ErrorType.Conflict => (int)HttpStatusCode.Conflict,
+            ErrorType.Validation => (int)HttpStatusCode.BadRequest,
+            ErrorType.ExternalService => (int)HttpStatusCode.BadGateway,
             _=> (int)HttpStatusCode.InternalServerError
         };
 
@@ -76,6 +73,29 @@ namespace Booking.Application.Common.Exceptions
         {
             var errors = exception.Errors.GroupBy(e => e.PropertyName).Select(g => $"{g.Key}: {string.Join(", ", g.Select(e => e.ErrorMessage))}");
             return string.Join(" | ", errors);
+        }
+
+        private object CreateErrorResponse(Error error, Exception originalException)
+        {
+            var response = new Dictionary<string, object>
+            {
+                ["code"] = error.Code,
+                ["message"] = error.Message,
+                ["type"] = error.Type.ToString(),
+                ["timestamp"] = error.Timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            };
+
+            if (!string.IsNullOrEmpty(error.Details))
+            {
+                response["details"] = error.Details;
+            }
+
+            if(error.Metadata != null && error.Metadata.Any())
+            {
+                response["metadata"] = error.Metadata;
+            }
+
+            return response;
         }
     }
 }
