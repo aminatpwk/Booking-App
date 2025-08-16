@@ -77,6 +77,16 @@ namespace Booking.Infrastructure.Apartments
                 if (sortBy.Equals("Price", StringComparison.OrdinalIgnoreCase))
                 {
                     query = sortDescending ? query.OrderByDescending(a => a.Price) : query.OrderBy(a => a.Price);
+                } else if(sortBy.Equals("Rating", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (sortDescending)
+                    {
+                        query = query.OrderByDescending(a => a.Reviews.Any() ? a.Reviews.Average(r => r.Rating) : 0);
+                    }
+                    else
+                    {
+                        query = query.OrderBy(a => a.Reviews.Any() ? a.Reviews.Average(r => r.Rating) : 0);
+                    }
                 }
                 else
                 {
