@@ -18,14 +18,23 @@ namespace Booking.Application.Features.Users.Commands.CreateUser
 
         public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
+            if(request?.UserDto == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Request cannot be null!");
+            }
+
             var isUniqueUser = await _userRepository.IsEmailUnique(request.UserDto.Email, cancellationToken);
             if (!isUniqueUser)
             {
-                throw new Exception("User with this e-mail already exists!");
+                throw new ValidationException("User with this e-mail already exists!");
             }
 
-            var user = _mapper.Map<User>(request.UserDto);
-            user.SetPassword(request.UserDto.Password);
+            var user = User.CreateUser(
+                request.UserDto.FirstName,
+                request.UserDto.LastName,
+                request.UserDto.Email,
+                request.UserDto.Password
+                );
 
             await _userRepository.Add(user);
             return user.Id;

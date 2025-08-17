@@ -12,5 +12,6 @@ namespace Booking.Application.Features.Owners
     {
         Task<bool> IsUniqueIdentityCardNumber(string identitycardno, CancellationToken cancellationToken);
         Task<Owner?> GetByUserId(Guid userId);
+        Task<bool> UserAlreadyHasOwnerProfile(Guid userId, CancellationToken cancellationToken);
     }
 }

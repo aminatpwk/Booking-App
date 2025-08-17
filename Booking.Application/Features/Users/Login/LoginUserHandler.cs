@@ -16,6 +16,11 @@ namespace Booking.Application.Features.Users.Login
 
         public async Task<string> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
+            if(request?.LoginUserDto == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Login request cannot be null!");
+            }
+
             var loggedUserDto = request.LoginUserDto;
             if (loggedUserDto is null)
             {
@@ -28,14 +33,12 @@ namespace Booking.Application.Features.Users.Login
                 throw new UnauthorizedAccessException("Invalid email or password");
             }
 
-
-            var isCorrectPassword = BCrypt.Net.BCrypt.Verify(loggedUserDto.Password, user.Password);
-            if (!isCorrectPassword)
+            if (!user.VerifyPassword(loggedUserDto.Password))
             {
                 throw new UnauthorizedAccessException("Invalid email or password");
             }
 
-            if (loggedUserDto.Role == "Owner" && user.Owner == null)
+            if (loggedUserDto.Role.Equals("Owner", StringComparison.OrdinalIgnoreCase) && user.Owner == null)
             {
                 throw new UnauthorizedAccessException("You do not have Owner role.");
             }

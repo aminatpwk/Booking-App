@@ -15,8 +15,8 @@ namespace Booking.Infrastructure.Users
 
         public async Task<bool> IsEmailUnique(string email, CancellationToken cancellationToken)
         {
-            var isUnique = await _context.Users.Where(u => u.Email == email).ToListAsync(cancellationToken);
-            return !isUnique.Any();
+            var isUnique = await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower(), cancellationToken);
+            return !isUnique;
         }
 
         public async Task<User> GetUserByEmail(string email, CancellationToken cancellationToken)

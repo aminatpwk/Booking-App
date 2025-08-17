@@ -20,30 +20,41 @@ namespace Booking.Domain.Users
         public DateTime CreatedOnUtc { get; private set; }
         public Owner? Owner { get; private set; }
 
-        public User()
+        private User()
         {
         }
 
-        public User(Guid id, string firstName, string lastName, string email, string password, DateTime createdOnUtc)
+        //private User(Guid id, string firstName, string lastName, string email, string hashedPassword, DateTime createdOnUtc)
+        //{
+        //    Id = id;
+        //    FirstName = firstName;
+        //    LastName = lastName;
+        //    Email = email;
+        //    Password = hashedPassword;
+        //    CreatedOnUtc = createdOnUtc;
+        //}
+
+        public static User CreateUser(string firstName, string lastName, string email, string plainPassword)
         {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            Email = email;
-            Password = password;
-            CreatedOnUtc = createdOnUtc;
+            return new User
+            {
+                Id = Guid.NewGuid(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Password = BCrypt.Net.BCrypt.HashPassword(plainPassword),
+                CreatedOnUtc = DateTime.UtcNow
+            };
         }
 
-        public static User CreateUser(string firstName, string lastName, string email, string password)
-        {
-            Guid UserId = Guid.NewGuid();
-            DateTime createdOnUtc = DateTime.UtcNow;
-            return new User(UserId, firstName, lastName, email, password ,createdOnUtc);
-        }
+        //public void SetPassword(string plainPassword)
+        //{
+        //    Password = BCrypt.Net.BCrypt.HashPassword(plainPassword);
+        //}
 
-        public void SetPassword(string plainPassword)
+        public bool VerifyPassword(string plainPassword)
         {
-            Password = BCrypt.Net.BCrypt.HashPassword(plainPassword);
+            return BCrypt.Net.BCrypt.Verify(plainPassword, Password);
         }
     }
 }
