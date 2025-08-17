@@ -49,6 +49,7 @@ namespace Booking.Application.Features.Bookings.Commands
                 throw new Exception("This apartment is already booked for this period!");
             }
 
+            //TO DO: me implementu logjiken e llogaritjes se cmimit dhe totalit sipas kritereve
             decimal priceForPeriod = 35;
             decimal cleaningFee = 5;
             decimal amenitiesUpCharge = 5;

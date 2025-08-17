@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
-using Booking.Application.Features.Owners;
+﻿using MediatR;
 using Booking.Domain.Owners;
 using FluentValidation;
 using Booking.Application.Features.Users;
