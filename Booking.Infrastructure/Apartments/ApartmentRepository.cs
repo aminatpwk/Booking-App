@@ -3,6 +3,7 @@ using Booking.Infrastructure.GenericRepoImpl;
 using Booking.Domain.Apartments;
 using Microsoft.EntityFrameworkCore;
 using Booking.Domain.Owners;
+using Booking.Domain.Bookings;
 
 namespace Booking.Infrastructure.Apartments
 {
@@ -100,6 +101,47 @@ namespace Booking.Infrastructure.Apartments
             return (apartments, totalCount);
         }
 
+        public async Task<bool> UpdateLastBookedOnUtc(Guid apartmentId, DateTime bookingStartDate, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var apartment = await _context.Apartments.FirstOrDefaultAsync(a => a.Id == apartmentId, cancellationToken);
+                if(apartment == null)
+                {
+                    return false;
+                }
+
+                if(apartment.LastBookedOnUtc == null || bookingStartDate > apartment.LastBookedOnUtc.Value)
+                {
+                    apartment.SetLastBookedOnUtc(bookingStartDate);
+                    var affectedRows = await _context.SaveChangesAsync(cancellationToken);
+                    return affectedRows > 0;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<IQueryable<Apartment>> GetAvailableApartments(DateTime startDate, DateTime endDate)
+        {
+            if (startDate >= endDate)
+            {
+                throw new ArgumentException("Start date must be before end date!");
+            }
+
+            var bufferDays = 90;
+            var thresholdDate = startDate.AddDays(-bufferDays);
+
+            //kontrollohet nese apartamenti ka patur booking ne kohet e fundit apo jo, nese jo merret si available, nese po atehere
+            //kontrollohen bookings aktual te lidhur me te te cilet ndikohen nga periudha e datave te filtrimit
+            return _context.Apartments.Where(apartment => apartment.LastBookedOnUtc == null || apartment.LastBookedOnUtc < thresholdDate ||
+                (apartment.LastBookedOnUtc >= thresholdDate && !_context.Bookings.Where(booking => booking.ApartmentId == apartment.Id && (booking.Status == BookingStatus.Confirmed || booking.Status == BookingStatus.PendingApproval) &&
+                 booking.End > startDate.AddDays(-30) && booking.Start < endDate.AddDays(30)).Any(booking => booking.Start < endDate && booking.End > startDate)));
+        }
     }
 }
 

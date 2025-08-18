@@ -47,6 +47,12 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
 
             booking.Confirm();
             await _bookingRepository.Update(booking);
+
+            var updateResult = await _apartmentRepository.UpdateLastBookedOnUtc(booking.ApartmentId, booking.Start, cancellationToken);
+            if (!updateResult)
+            {
+                _logger.LogError("Failed to update LastBookedOnUtc attribute for apartment {ApartmentId} after confirming booking {BookingId}!", booking.ApartmentId, booking.Id);
+            }
             await SendEmailAfterConfirmation(booking);
             return true;
         }

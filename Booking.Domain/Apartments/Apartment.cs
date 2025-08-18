@@ -110,4 +110,9 @@ public class Apartment
         IsActive = isActive;
         IsAvailable = isAvailable;
     }
+
+    public void SetLastBookedOnUtc(DateTime bookingDate)
+    {
+        LastBookedOnUtc = bookingDate;
+    }
 }
