@@ -30,17 +30,30 @@ namespace Booking.Infrastructure
                 .WithMany(o => o.Apartments)
                 .HasForeignKey(a => a.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Apartment>()
+                .HasIndex(a => a.Country);
+            modelBuilder.Entity<Apartment>()
+                .HasIndex(a => a.City);
+            modelBuilder.Entity<Apartment>()
+                .HasIndex(a => a.Type);
+            modelBuilder.Entity<Apartment>()
+                .HasIndex(a => a.Price);
+            modelBuilder.Entity<Apartment>()
+                .HasIndex(a => a.LastBookedOnUtc);
 
             modelBuilder.Entity<BookingEntity>()
                 .Property(b => b.Status)
                 .HasConversion<string>();
-
             modelBuilder.Entity<BookingEntity>()
                 .Property(b => b.ConfirmationToken)
                 .HasMaxLength(64);
             modelBuilder.Entity<BookingEntity>()
                 .HasIndex(b => b.ConfirmationToken)
                 .IsUnique();
+            modelBuilder.Entity<BookingEntity>()
+                .HasIndex(b => new {b.ApartmentId, b.Start, b.End});
+            modelBuilder.Entity<BookingEntity>()
+                .HasIndex(b => b.Status);
 
             base.OnModelCreating(modelBuilder);
         }

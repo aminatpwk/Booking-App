@@ -50,6 +50,8 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
                 request.Type,
                 request.MinPrice,
                 request.MaxPrice,
+                request.startDate,
+                request.endDate,
                 cancellationToken);
 
             var apartmentDto = _mapper.Map<List<ApartmentDto>>(apartments);

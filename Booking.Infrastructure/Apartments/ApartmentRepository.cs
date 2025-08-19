@@ -34,6 +34,8 @@ namespace Booking.Infrastructure.Apartments
             ApartmentType? type = null,
             decimal? minPrice = null,
             decimal? maxPrice = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
             CancellationToken cancellationToken = default)
         {
             var query = _context.Apartments
@@ -71,6 +73,26 @@ namespace Booking.Infrastructure.Apartments
             if(maxPrice.HasValue)
             {
                 query = query.Where(a => a.Price <= maxPrice.Value);
+            }
+
+            if(startDate.HasValue && endDate.HasValue)
+            {
+                if(startDate.Value >= endDate.Value)
+                {
+                    throw new ArgumentException("Start date must be before end date!");
+                }
+
+                var start = startDate.Value;
+                var end = endDate.Value;
+                var bufferDays = 90;
+                var thresholdDate = start.AddDays(-bufferDays);
+
+                var availableApartmentsIds = _context.Apartments.Where(a => a.LastBookedOnUtc == null || a.LastBookedOnUtc < thresholdDate).Select(a => a.Id).AsQueryable();
+                var bookedApartmentIds = _context.Bookings.Where(b =>
+                                                                   (b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.PendingApproval) &&
+                                                                   b.End > start.AddDays(-30) && b.Start < end.AddDays(30) && b.Start < end & b.End > start).Select(b => b.ApartmentId).Distinct().AsQueryable();
+                var finalIds = availableApartmentsIds.Except(bookedApartmentIds);
+                query = query.Where(a => finalIds.Contains(a.Id));
             }
 
             if (!string.IsNullOrEmpty(sortBy))
@@ -124,23 +146,6 @@ namespace Booking.Infrastructure.Apartments
             {
                 return false;
             }
-        }
-
-        public async Task<IQueryable<Apartment>> GetAvailableApartments(DateTime startDate, DateTime endDate)
-        {
-            if (startDate >= endDate)
-            {
-                throw new ArgumentException("Start date must be before end date!");
-            }
-
-            var bufferDays = 90;
-            var thresholdDate = startDate.AddDays(-bufferDays);
-
-            //kontrollohet nese apartamenti ka patur booking ne kohet e fundit apo jo, nese jo merret si available, nese po atehere
-            //kontrollohen bookings aktual te lidhur me te te cilet ndikohen nga periudha e datave te filtrimit
-            return _context.Apartments.Where(apartment => apartment.LastBookedOnUtc == null || apartment.LastBookedOnUtc < thresholdDate ||
-                (apartment.LastBookedOnUtc >= thresholdDate && !_context.Bookings.Where(booking => booking.ApartmentId == apartment.Id && (booking.Status == BookingStatus.Confirmed || booking.Status == BookingStatus.PendingApproval) &&
-                 booking.End > startDate.AddDays(-30) && booking.Start < endDate.AddDays(30)).Any(booking => booking.Start < endDate && booking.End > startDate)));
         }
     }
 }

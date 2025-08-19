@@ -23,6 +23,8 @@ namespace Booking.Application.Features.Apartments.Queries.GetAllPaged
         public ApartmentType? Type { get; set; }
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate   { get; set; }
 
     }
 }

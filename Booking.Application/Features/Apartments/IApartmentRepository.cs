@@ -23,8 +23,9 @@ namespace Booking.Application.Features.Apartments
             ApartmentType? type = null,
             decimal? minPrice = null,
             decimal? maxPrice = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
             CancellationToken cancellationToken = default);
-        Task<IQueryable<Apartment>> GetAvailableApartments(DateTime startDate, DateTime endDate);
         Task<bool> UpdateLastBookedOnUtc(Guid apartmentId, DateTime bookingStartDate, CancellationToken cancellationToken);
     }
 }
