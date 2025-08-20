@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Booking.Application.Common.DTOs;
+using Booking.Application.Common.Services;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
 using Booking.Application.Features.Users;
@@ -20,7 +22,8 @@ namespace Booking.Application.Features.Bookings.Commands
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _contextAccessor;
-        public CreateBookingHandler(IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IApartmentRepository apartmentRepository, IUserRepository userRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, IConfiguration configuration, IHttpContextAccessor contextAccessor)
+        private readonly INotificationService _notificationService;
+        public CreateBookingHandler(IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IApartmentRepository apartmentRepository, IUserRepository userRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, IConfiguration configuration, IHttpContextAccessor contextAccessor, INotificationService notificationService)
         {
             _bookingRepository = bookingRepository;
             _mapper = mapper;
@@ -31,6 +34,7 @@ namespace Booking.Application.Features.Bookings.Commands
             _emailService = emailService;
             _configuration = configuration;
             _contextAccessor = contextAccessor;
+            _notificationService = notificationService;
         }
 
         public async Task<Guid> Handle(CreateBookingCommand command, CancellationToken cancellationToken)
@@ -59,6 +63,19 @@ namespace Booking.Application.Features.Bookings.Commands
             await _bookingRepository.Add(bookingEntity);
 
             await SendConfirmationEmail(bookingEntity);
+
+            var notificationDto = new NotificationDto
+            {
+                BookingId = bookingEntity.Id,
+                ApartmentId = apartment.Id,
+                CheckIn = bookingDto.Start,
+                CheckOut = bookingDto.End,
+                GuestId = userId,
+                CreatedAt = DateTime.UtcNow,
+                Status = BookingStatus.PendingApproval
+            };
+
+            await _notificationService.SendNotificationToOwnerForBookingCreation(apartment.OwnerId, notificationDto);
             return bookingEntity.Id;
         }
 

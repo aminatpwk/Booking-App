@@ -1,9 +1,13 @@
-﻿using MediatR;
-using Booking.Domain.Bookings;
-using Booking.Application.Features.Users;
-using Microsoft.AspNetCore.Http;
+﻿using Booking.Application.Common.DTOs;
+using Booking.Application.Common.DTOs.BookingDTOs;
+using Booking.Application.Common.Services;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
+using Booking.Application.Features.Users;
+using Booking.Domain.Bookings;
+using Booking.Domain.Users;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
@@ -17,7 +21,8 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IEmailService _emailService;
         private readonly ILogger<ConfirmBookingHandler> _logger;
-        public ConfirmBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger)
+        private readonly INotificationService _notificationService;
+        public ConfirmBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, INotificationService notificationService)
         {
             _bookingRepository = bookingRepository;
             _currentUserService = currentUserService;
@@ -26,6 +31,7 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
             _emailTemplateService = emailTemplateService;
             _emailService = emailService;
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         public async Task<bool> Handle(ConfirmBookingCommand command, CancellationToken cancellationToken)
@@ -53,11 +59,27 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
             {
                 _logger.LogError("Failed to update LastBookedOnUtc attribute for apartment {ApartmentId} after confirming booking {BookingId}!", booking.ApartmentId, booking.Id);
             }
-            await SendEmailAfterConfirmation(booking);
+
+            var apartment = await _apartmentRepository.GetById(booking.ApartmentId);
+
+            await SendEmailAfterConfirmation(booking, apartment);
+
+            var notificationDto = new NotificationDto
+            {
+                BookingId = booking.Id,
+                ApartmentId = booking.ApartmentId,
+                CheckIn = booking.Start,
+                CheckOut = booking.End,
+                GuestId = booking.UserId,
+                CreatedAt = DateTime.UtcNow,
+                Status = BookingStatus.Confirmed
+            };
+
+            await _notificationService.SendNotificationToOwnerForBookingCreation(apartment.OwnerId, notificationDto);
             return true;
         }
 
-        private async Task SendEmailAfterConfirmation(BookingEntity booking)
+        private async Task SendEmailAfterConfirmation(BookingEntity booking, Apartment apartment)
         {
             try
             {
@@ -66,8 +88,6 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
                 {
                     throw new Exception("E-mail not found!");
                 }
-
-                var apartment = await _apartmentRepository.GetById(booking.ApartmentId);
 
                 var request = _httpContextAccessor.HttpContext?.Request;
                 var baseUrl = $"{request.Scheme}://{request?.Host}";

@@ -1,4 +1,6 @@
-﻿using Booking.Application.Features.Apartments;
+﻿using Booking.Application.Common.DTOs;
+using Booking.Application.Common.Services;
+using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Bookings.Commands.ConfirmBooking;
 using Booking.Application.Features.Emails;
 using Booking.Application.Features.Users;
@@ -18,8 +20,9 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IEmailService _emailService;
         private readonly ILogger<ConfirmBookingHandler> _logger;
+        private readonly INotificationService _notificationService;
 
-        public CancelBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger)
+        public CancelBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, INotificationService notificationService)
         {
             _bookingRepository = bookingRepository;
             _currentUserService = currentUserService;
@@ -28,6 +31,7 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
             _emailTemplateService = emailTemplateService;
             _emailService = emailService;
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         public async Task<bool> Handle(CancelBookingCommand command, CancellationToken cancellationToken)
@@ -47,13 +51,29 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
                 throw new InvalidOperationException("Booking cannot be cancelled in current status!");
             }
 
+            var apartment = await _apartmentRepository.GetById(booking.ApartmentId);
+
             booking.Cancel();
             await _bookingRepository.Update(booking);
-            await SendEmailAfterCancellation(booking);
+            await SendEmailAfterCancellation(booking, apartment);
+
+            var notificationDto = new NotificationDto
+            {
+                BookingId = booking.Id,
+                ApartmentId = booking.ApartmentId,
+                CheckIn = booking.Start,
+                CheckOut = booking.End,
+                GuestId = booking.UserId,
+                CreatedAt = DateTime.UtcNow,
+                Status = BookingStatus.Confirmed
+            };
+
+            await _notificationService.SendNotificationToOwnerForBookingCreation(apartment.OwnerId, notificationDto);
+
             return true;
         }
 
-        private async Task SendEmailAfterCancellation(BookingEntity booking)
+        private async Task SendEmailAfterCancellation(BookingEntity booking, Apartment apartment)
         {
             try
             {
@@ -62,8 +82,6 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
                 {
                     throw new Exception("E-mail not found!");
                 }
-
-                var apartment = await _apartmentRepository.GetById(booking.ApartmentId);
 
                 var request = _httpContextAccessor.HttpContext?.Request;
                 var baseUrl = $"{request.Scheme}://{request?.Host}";
