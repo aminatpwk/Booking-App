@@ -1,34 +1,36 @@
-﻿using Booking.Application.Features.Apartments;
+﻿using Booking.Application;
+using Booking.Application.Common.Model.Email;
+using Booking.Application.Common.Services;
+using Booking.Application.Common.Services.Notifications;
+using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Apartments.Commands.CreateApartment;
+using Booking.Application.Features.Bookings;
+using Booking.Application.Features.Bookings.Commands;
+using Booking.Application.Features.Emails;
+using Booking.Application.Features.Owners;
+using Booking.Application.Features.Owners.Commands;
+using Booking.Application.Features.Photos;
+using Booking.Application.Features.Reviews;
+using Booking.Application.Features.Reviews.Commands.CreateReview;
 using Booking.Application.Features.Users;
+using Booking.Application.Features.Users.Auth;
 using Booking.Application.Features.Users.Commands.CreateUser;
 using Booking.Application.Repositories;
-using Booking.Infrastructure.GenericRepoImpl;
-using Booking.Infrastructure.Users;
+using Booking.Domain.Reviews;
 using Booking.Infrastructure.Apartments;
+using Booking.Infrastructure.Bookings;
+using Booking.Infrastructure.Emails;
+using Booking.Infrastructure.GenericRepoImpl;
+using Booking.Infrastructure.Owners;
+using Booking.Infrastructure.Photos;
+using Booking.Infrastructure.Reviews;
+using Booking.Infrastructure.Services;
+using Booking.Infrastructure.Services.Notifications;
+using Booking.Infrastructure.Users;
+using Booking.Infrastructure.Users.AuthImpl;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Booking.Application.Features.Owners;
-using Booking.Infrastructure.Owners;
-using Booking.Application.Features.Owners.Commands;
-using Booking.Application.Features.Users.Auth;
-using Booking.Infrastructure.Users.AuthImpl;
-using Booking.Application.Features.Photos;
-using Booking.Infrastructure.Photos;
-using Booking.Application.Features.Emails;
-using Booking.Infrastructure.Emails;
-using Booking.Application.Features.Reviews;
-using Booking.Domain.Reviews;
-using Booking.Infrastructure.Reviews;
-using Booking.Application.Features.Reviews.Commands.CreateReview;
-using Booking.Application.Features.Bookings;
-using Booking.Infrastructure.Bookings;
-using Booking.Application;
-using Booking.Application.Features.Bookings.Commands;
-using Booking.Application.Common.Model.Email;
-using Booking.Application.Common.Services;
-using Booking.Infrastructure.Services;
 
 namespace Booking.Infrastructure
 {
@@ -70,6 +72,10 @@ namespace Booking.Infrastructure
             services.AddScoped<CreateBookingValidations>();
             services.AddScoped<IBookingStatusUpdaterJob, BookingStatusUpdaterJob>();
             services.AddApplicationConfigurations();
+
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<ITemplateService, TemplateService>();
+
             return services;
 
         }

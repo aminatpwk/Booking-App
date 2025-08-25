@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Booking.Application.Common.DTOs;
-using Booking.Application.Common.Services;
+using Booking.Application.Common.Services.Notifications;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
 using Booking.Application.Features.Users;
@@ -70,12 +70,12 @@ namespace Booking.Application.Features.Bookings.Commands
                 ApartmentId = apartment.Id,
                 CheckIn = bookingDto.Start,
                 CheckOut = bookingDto.End,
-                GuestId = userId,
+                OwnerId = apartment.OwnerId,
                 CreatedAt = DateTime.UtcNow,
                 Status = BookingStatus.PendingApproval
             };
 
-            await _notificationService.SendNotificationToOwnerForBookingCreation(apartment.OwnerId, notificationDto);
+            await _notificationService.SendToUserAsync(apartment.OwnerId, notificationDto);
             return bookingEntity.Id;
         }
 

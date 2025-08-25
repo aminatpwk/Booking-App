@@ -1,26 +1,27 @@
+using Booking.Application.Common.Exceptions;
+using Booking.Application.Common.Services;
 using Booking.Application.Features.Apartments.Commands.CreateApartment;
-using Booking.Application.Features.Users.Commands.CreateUser;
-using Booking.Infrastructure;
-using Booking.Application.Features.Owners.Commands;
-using Booking.Application.Features.Apartments.Queries.Get;
 using Booking.Application.Features.Apartments.Commands.DeleteApartment;
 using Booking.Application.Features.Apartments.Commands.UpdateApartment;
+using Booking.Application.Features.Apartments.Queries.Get;
+using Booking.Application.Features.Apartments.Queries.GetAllPaged;
+using Booking.Application.Features.Bookings.Commands;
+using Booking.Application.Features.Bookings.Commands.CancelBooking;
+using Booking.Application.Features.Bookings.Commands.ConfirmBooking;
+using Booking.Application.Features.Bookings.Queries.GetAll;
+using Booking.Application.Features.Owners.Commands;
+using Booking.Application.Features.Photos.Commands.DeletePhotos;
+using Booking.Application.Features.Reviews.Commands.CreateReview;
+using Booking.Application.Features.Users;
+using Booking.Application.Features.Users.Commands.CreateUser;
+using Booking.Infrastructure;
+using Booking.Infrastructure.Services;
+using Booking.Infrastructure.Users;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Booking.Shared.SignalR.Hubs;
 using System.Text;
-using Booking.Infrastructure.Services;
-using Booking.Application.Common.Exceptions;
-using Booking.Application.Features.Apartments.Queries.GetAllPaged;
-using Booking.Application.Features.Photos.Commands.DeletePhotos;
-using Booking.Application.Features.Users;
-using Booking.Infrastructure.Users;
-using Booking.Application.Features.Reviews.Commands.CreateReview;
-using Booking.Application.Features.Bookings.Commands;
-using Booking.Application.Features.Bookings.Queries.GetAll;
-using Booking.Application.Features.Bookings.Commands.ConfirmBooking;
-using Booking.Application.Features.Bookings.Commands.CancelBooking;
-using Hangfire;
-using Booking.Application.Common.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,7 @@ builder.Services.AddHangfire(config =>
 });
 builder.Services.AddHangfireServer();
 builder.Services.AddScoped<IBookingStatusUpdaterJob, BookingStatusUpdaterJob>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();  
 
@@ -83,4 +85,5 @@ RecurringJob.AddOrUpdate<IBookingStatusUpdaterJob>(
     "1 0 * * *"
     );
 app.MapControllers();
+app.MapHub<NotificationHub>("/hubs/notifications");
 app.Run();

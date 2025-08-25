@@ -1,5 +1,5 @@
 ﻿using Booking.Application.Common.DTOs;
-using Booking.Application.Common.Services;
+using Booking.Application.Common.Services.Notifications;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Bookings.Commands.ConfirmBooking;
 using Booking.Application.Features.Emails;
@@ -63,12 +63,12 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
                 ApartmentId = booking.ApartmentId,
                 CheckIn = booking.Start,
                 CheckOut = booking.End,
-                GuestId = booking.UserId,
+                OwnerId = apartment.OwnerId,
                 CreatedAt = DateTime.UtcNow,
                 Status = BookingStatus.Confirmed
             };
 
-            await _notificationService.SendNotificationToOwnerForBookingCreation(apartment.OwnerId, notificationDto);
+            await _notificationService.SendToUserAsync(apartment.OwnerId, notificationDto);
 
             return true;
         }

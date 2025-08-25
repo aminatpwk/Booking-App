@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Test for SignalR</title>
+</head>
+<body>
+    <h2>SignalR Client</h2>
+    <ul id="messages"></ul>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7157/hubs/notifications") 
+            .build();
+
+        connection.on("ReceiveNotification", (notification) => {
+            const li = document.createElement("li");
+            li.textContent = `New notification: ${JSON.stringify(notification)}`;
+            document.getElementById("messages").appendChild(li);
+        });
+
+        connection.start()
+            .then(() => console.log("Connected to SignalR"))
+            .catch(err => console.error(err));
+    </script>
+</body>
+</html>

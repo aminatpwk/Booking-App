@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24 d17.14
+VisualStudioVersion = 17.14.36310.24
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingAPI", "Booking-App\BookingAPI.csproj", "{ACAC8349-AC51-4972-BB6A-4C3DD9ED1EFA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Application", "Book
 	ProjectSection(ProjectDependencies) = postProject
 		{8EF89513-818F-4D82-B941-E271CF4F818E} = {8EF89513-818F-4D82-B941-E271CF4F818E}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Shared", "Booking.Shared\Booking.Shared.csproj", "{87579C0E-2D1A-4B78-930D-5DC6C3C8EEC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{F27CA3D1-976C-4840-A94B-50A31312F8DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F27CA3D1-976C-4840-A94B-50A31312F8DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F27CA3D1-976C-4840-A94B-50A31312F8DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87579C0E-2D1A-4B78-930D-5DC6C3C8EEC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87579C0E-2D1A-4B78-930D-5DC6C3C8EEC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87579C0E-2D1A-4B78-930D-5DC6C3C8EEC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87579C0E-2D1A-4B78-930D-5DC6C3C8EEC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
