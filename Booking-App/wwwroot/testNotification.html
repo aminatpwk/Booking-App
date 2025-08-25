@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Test for SignalR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
 </head>
 <body>
     <h2>SignalR Client</h2>
@@ -13,7 +14,7 @@
             .withUrl("https://localhost:7157/hubs/notifications") 
             .build();
 
-        connection.on("ReceiveNotification", (notification) => {
+        connection.on("ReceiveBookingNotification", (notification) => {
             const li = document.createElement("li");
             li.textContent = `New notification: ${JSON.stringify(notification)}`;
             document.getElementById("messages").appendChild(li);

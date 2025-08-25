@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Booking.Application.Common.DTOs;
+using Booking.Application.Common.Events.Bookings;
 using Booking.Application.Common.Services.Notifications;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
@@ -14,27 +15,21 @@ namespace Booking.Application.Features.Bookings.Commands
     public class CreateBookingHandler : IRequestHandler<CreateBookingCommand, Guid>
     {
         private readonly IBookingRepository _bookingRepository;
-        private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUserService;
         private readonly IApartmentRepository _apartmentRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IEmailService _emailService;
-        private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly INotificationService _notificationService;
-        public CreateBookingHandler(IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IApartmentRepository apartmentRepository, IUserRepository userRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, IConfiguration configuration, IHttpContextAccessor contextAccessor, INotificationService notificationService)
+        private readonly IMediator _mediator;
+        public CreateBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, IHttpContextAccessor contextAccessor, IMediator mediator)
         {
             _bookingRepository = bookingRepository;
-            _mapper = mapper;
             _currentUserService = currentUserService;
             _apartmentRepository = apartmentRepository;
-            _userRepository = userRepository;
             _emailTemplateService = emailTemplateService;
             _emailService = emailService;
-            _configuration = configuration;
             _contextAccessor = contextAccessor;
-            _notificationService = notificationService;
+            _mediator = mediator;
         }
 
         public async Task<Guid> Handle(CreateBookingCommand command, CancellationToken cancellationToken)
@@ -64,18 +59,7 @@ namespace Booking.Application.Features.Bookings.Commands
 
             await SendConfirmationEmail(bookingEntity);
 
-            var notificationDto = new NotificationDto
-            {
-                BookingId = bookingEntity.Id,
-                ApartmentId = apartment.Id,
-                CheckIn = bookingDto.Start,
-                CheckOut = bookingDto.End,
-                OwnerId = apartment.OwnerId,
-                CreatedAt = DateTime.UtcNow,
-                Status = BookingStatus.PendingApproval
-            };
-
-            await _notificationService.SendToUserAsync(apartment.OwnerId, notificationDto);
+            await _mediator.Publish(new BookingCreatedEvent(bookingEntity.Id, apartment.OwnerId, apartment.Name), cancellationToken);
             return bookingEntity.Id;
         }
 

@@ -4,6 +4,7 @@ using Booking.Application.Common.Services.Notifications;
 using Booking.Application.Common.DTOs;
 using Microsoft.Extensions.Logging;
 using Booking.Application.Common.Events;
+using Booking.Domain.Bookings;
 
 namespace Booking.Application.Features.Bookings.Events
 {
@@ -27,18 +28,19 @@ namespace Booking.Application.Features.Bookings.Events
                 BookingId = domainEvent.BookingId,
                 OwnerId = domainEvent.OwnerId,
                 ApartmentName = domainEvent.ApartmentName,
-                CreatedAt = domainEvent.DateOccurred
+                CreatedAt = domainEvent.DateOccurred,
+                Status = BookingStatus.PendingApproval
             };
 
             var message = _templateService.RenderBookingCreatedTemplate(notification);
             notification.Message = message;
 
-            await _notificationService.SendToUserAsync(domainEvent.OwnerId, notification);
-
             try
             {
+                await _notificationService.SendToUserAsync(domainEvent.OwnerId, notification);
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error sending booking created notification for BookingId: {BookingId}", domainEvent.BookingId);
             }

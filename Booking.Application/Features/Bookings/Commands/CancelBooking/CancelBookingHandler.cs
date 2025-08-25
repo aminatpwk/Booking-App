@@ -8,6 +8,7 @@ using Booking.Domain.Bookings;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Booking.Application.Common.Events.Bookings;
 
 namespace Booking.Application.Features.Bookings.Commands.CancelBooking
 {
@@ -20,9 +21,9 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IEmailService _emailService;
         private readonly ILogger<ConfirmBookingHandler> _logger;
-        private readonly INotificationService _notificationService;
+        private readonly IMediator _mediator;
 
-        public CancelBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, INotificationService notificationService)
+        public CancelBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, IMediator mediator)
         {
             _bookingRepository = bookingRepository;
             _currentUserService = currentUserService;
@@ -31,7 +32,7 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
             _emailTemplateService = emailTemplateService;
             _emailService = emailService;
             _logger = logger;
-            _notificationService = notificationService;
+            _mediator = mediator;
         }
 
         public async Task<bool> Handle(CancelBookingCommand command, CancellationToken cancellationToken)
@@ -57,19 +58,7 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
             await _bookingRepository.Update(booking);
             await SendEmailAfterCancellation(booking, apartment);
 
-            var notificationDto = new NotificationDto
-            {
-                BookingId = booking.Id,
-                ApartmentId = booking.ApartmentId,
-                CheckIn = booking.Start,
-                CheckOut = booking.End,
-                OwnerId = apartment.OwnerId,
-                CreatedAt = DateTime.UtcNow,
-                Status = BookingStatus.Confirmed
-            };
-
-            await _notificationService.SendToUserAsync(apartment.OwnerId, notificationDto);
-
+            await _mediator.Publish(new BookingCancelledEvent(booking.Id, booking.ApartmentId, apartment?.Name ?? "Unknown"), cancellationToken);
             return true;
         }
 

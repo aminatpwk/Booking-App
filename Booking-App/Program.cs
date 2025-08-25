@@ -86,4 +86,5 @@ RecurringJob.AddOrUpdate<IBookingStatusUpdaterJob>(
     );
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
+app.UseStaticFiles();
 app.Run();

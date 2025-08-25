@@ -1,6 +1,7 @@
 ﻿using Booking.Application.Common.DTOs;
 using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Application.Common.Services.Notifications;
+using Booking.Application.Common.Events.Bookings;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
 using Booking.Application.Features.Users;
@@ -21,8 +22,8 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IEmailService _emailService;
         private readonly ILogger<ConfirmBookingHandler> _logger;
-        private readonly INotificationService _notificationService;
-        public ConfirmBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, INotificationService notificationService)
+        private readonly IMediator _mediator;
+        public ConfirmBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, IMediator mediator)
         {
             _bookingRepository = bookingRepository;
             _currentUserService = currentUserService;
@@ -31,7 +32,7 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
             _emailTemplateService = emailTemplateService;
             _emailService = emailService;
             _logger = logger;
-            _notificationService = notificationService;
+            _mediator = mediator;
         }
 
         public async Task<bool> Handle(ConfirmBookingCommand command, CancellationToken cancellationToken)
@@ -64,18 +65,7 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
 
             await SendEmailAfterConfirmation(booking, apartment);
 
-            var notificationDto = new NotificationDto
-            {
-                BookingId = booking.Id,
-                ApartmentId = booking.ApartmentId,
-                CheckIn = booking.Start,
-                CheckOut = booking.End,
-                OwnerId = apartment.OwnerId,
-                CreatedAt = DateTime.UtcNow,
-                Status = BookingStatus.Confirmed
-            };
-
-            await _notificationService.SendToUserAsync(apartment.OwnerId, notificationDto);
+            await _mediator.Publish(new BookingConfirmedEvent(booking.Id, apartment.OwnerId, apartment.Id, apartment.Name, booking.Start, booking.End), cancellationToken);
             return true;
         }
 
