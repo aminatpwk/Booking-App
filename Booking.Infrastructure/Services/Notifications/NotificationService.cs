@@ -22,11 +22,11 @@ namespace Booking.Infrastructure.Services.Notifications
         {
             try
             {
-                await _hubContext.Clients.All.ReceiveBookingNotification(notification);
-            }catch(Exception ex)
+                await _hubContext.Clients.Groups($"owner-{userId}").ReceiveBookingNotification(notification);
+            }
+            catch(Exception ex)
             {
-                Debug.WriteLine("Error sending notification to user {UserId} for BookingId: {BookingId}. Falling back to group sending.", userId, notification.BookingId);
-                await _hubContext.Clients.Group($"user-{userId}").ReceiveBookingNotification(notification);
+                Debug.WriteLine("Error sending notification to user {UserId}.");
             }
         }
     }

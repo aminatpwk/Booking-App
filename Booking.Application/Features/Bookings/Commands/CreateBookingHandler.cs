@@ -4,6 +4,7 @@ using Booking.Application.Common.Events.Bookings;
 using Booking.Application.Common.Services.Notifications;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
+using Booking.Application.Features.Owners;
 using Booking.Application.Features.Users;
 using Booking.Domain.Bookings;
 using MediatR;
@@ -21,6 +22,7 @@ namespace Booking.Application.Features.Bookings.Commands
         private readonly IEmailService _emailService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IMediator _mediator;
+        //private readonly IOwnerRepository _ownerRepository;
         public CreateBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, IHttpContextAccessor contextAccessor, IMediator mediator)
         {
             _bookingRepository = bookingRepository;
@@ -30,6 +32,7 @@ namespace Booking.Application.Features.Bookings.Commands
             _emailService = emailService;
             _contextAccessor = contextAccessor;
             _mediator = mediator;
+            //_ownerRepository = ownerRepository;
         }
 
         public async Task<Guid> Handle(CreateBookingCommand command, CancellationToken cancellationToken)
@@ -59,7 +62,11 @@ namespace Booking.Application.Features.Bookings.Commands
 
             await SendConfirmationEmail(bookingEntity);
 
-            await _mediator.Publish(new BookingCreatedEvent(bookingEntity.Id, apartment.OwnerId, apartment.Name), cancellationToken);
+            //var ownerModel = await _ownerRepository.GetById(apartment.OwnerId)
+
+            var bookingCreationEvent = new BookingCreatedEvent(bookingEntity.Id, apartment.Id, apartment.OwnerId, apartment.Name, bookingDto.Start, bookingDto.End);
+
+            await _mediator.Publish(bookingCreationEvent, cancellationToken);
             return bookingEntity.Id;
         }
 

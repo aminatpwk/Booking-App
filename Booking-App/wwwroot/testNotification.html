@@ -10,8 +10,13 @@
     <ul id="messages"></ul>
 
     <script>
+        const accessToken = localStorage.getItem("accessToken");
+
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7157/hubs/notifications") 
+            .withUrl("https://localhost:7157/hubs/notifications", {
+                accessTokenFactory: () => accessToken
+            }) 
+            .configureLogging(signalR.LogLevel.Information)
             .build();
 
         connection.on("ReceiveBookingNotification", (notification) => {

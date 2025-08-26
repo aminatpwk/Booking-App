@@ -1,4 +1,5 @@
 ﻿using Booking.Application.Common.DTOs;
+using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Application.Common.Services.Notifications;
 using Microsoft.Extensions.Configuration;
 
@@ -12,24 +13,24 @@ namespace Booking.Infrastructure.Services.Notifications
             _configuration = configuration;
         }
 
-        public string RenderBookingCreatedTemplate(NotificationDto notification)
+        public string RenderBookingCreatedTemplate(BookingNotificationPayload payload)
         {
             var template = _configuration["Notifications:BookingCreated"];
-            return template.Replace("{ApartmentName}", notification.ApartmentName)
-            .Replace("{StartDate}", notification.CheckIn.ToString("dd-MM-yyyy"))
-                .Replace("{EndDate}", notification.CheckOut.ToString("dd-MM-yyyy"));
+            return template.Replace("{ApartmentName}", payload.ApartmentName)
+            .Replace("{StartDate}", payload.CheckIn.ToString("dd-MM-yyyy"))
+                .Replace("{EndDate}", payload.CheckOut.ToString("dd-MM-yyyy"));
         }
 
-        public string RenderBookingConfirmedTemplate(NotificationDto notification)
+        public string RenderBookingConfirmedTemplate(BookingNotificationPayload payload)
         {
             var template = _configuration["Notifications:BookingConfirmed"];
-            return template.Replace("{ApartmentName}", notification.ApartmentName);
+            return template.Replace("{ApartmentName}", payload.ApartmentName);
         }
 
-        public string RenderBookingCancelledTemplate(NotificationDto notification)
+        public string RenderBookingCancelledTemplate(BookingNotificationPayload payload)
         {
             var template = _configuration["Notifications:BookingCancelled"];
-            return template.Replace("{ApartmentName}", notification.ApartmentName);
+            return template.Replace("{ApartmentName}", payload.ApartmentName);
         }
     }
 }

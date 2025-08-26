@@ -20,10 +20,10 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
         private readonly IApartmentRepository _apartmentRepository;
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IEmailService _emailService;
-        private readonly ILogger<ConfirmBookingHandler> _logger;
+        private readonly ILogger<CancelBookingHandler> _logger;
         private readonly IMediator _mediator;
 
-        public CancelBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, IMediator mediator)
+        public CancelBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<CancelBookingHandler> logger, IMediator mediator)
         {
             _bookingRepository = bookingRepository;
             _currentUserService = currentUserService;
@@ -58,7 +58,9 @@ namespace Booking.Application.Features.Bookings.Commands.CancelBooking
             await _bookingRepository.Update(booking);
             await SendEmailAfterCancellation(booking, apartment);
 
-            await _mediator.Publish(new BookingCancelledEvent(booking.Id, booking.ApartmentId, apartment?.Name ?? "Unknown"), cancellationToken);
+            var bookingCancelledEvent = new BookingCancelledEvent(booking.Id, booking.ApartmentId, apartment.Name, apartment.OwnerId, booking.Start, booking.End);
+
+            await _mediator.Publish(bookingCancelledEvent, cancellationToken);
             return true;
         }
 

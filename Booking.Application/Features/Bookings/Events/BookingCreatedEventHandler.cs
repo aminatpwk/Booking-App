@@ -3,8 +3,9 @@ using Booking.Application.Common.Events.Bookings;
 using Booking.Application.Common.Services.Notifications;
 using Booking.Application.Common.DTOs;
 using Microsoft.Extensions.Logging;
-using Booking.Application.Common.Events;
 using Booking.Domain.Bookings;
+using Booking.Application.Common.DTOs.BookingDTOs;
+using Booking.Application.Common.Enums;
 
 namespace Booking.Application.Features.Bookings.Events
 {
@@ -23,17 +24,23 @@ namespace Booking.Application.Features.Bookings.Events
 
         public async Task Handle(BookingCreatedEvent domainEvent, CancellationToken cancellationToken)
         {
-            var notification = new NotificationDto
+            var payload = new BookingNotificationPayload
             {
                 BookingId = domainEvent.BookingId,
-                OwnerId = domainEvent.OwnerId,
+                ApartmentId = domainEvent.ApartmentId,
                 ApartmentName = domainEvent.ApartmentName,
-                CreatedAt = domainEvent.DateOccurred,
+                CheckIn = domainEvent.CheckIn,
+                CheckOut = domainEvent.CheckOut,
                 Status = BookingStatus.PendingApproval
             };
 
-            var message = _templateService.RenderBookingCreatedTemplate(notification);
-            notification.Message = message;
+            var notification = new NotificationDto
+            {
+                Type = NotificationTypes.BookingCreated,
+                Message = _templateService.RenderBookingCreatedTemplate(payload),
+                CreatedAt = domainEvent.DateOccurred,
+                Payload = payload
+            };
 
             try
             {

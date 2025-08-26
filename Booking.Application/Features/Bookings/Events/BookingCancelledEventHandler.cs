@@ -2,7 +2,10 @@
 using Booking.Application.Common.Services.Notifications;
 using Microsoft.Extensions.Logging;
 using Booking.Application.Common.Events.Bookings;
+using Booking.Application.Common.DTOs.BookingDTOs;
+using Booking.Domain.Bookings;
 using Booking.Application.Common.DTOs;
+using Booking.Application.Common.Enums;
 
 namespace Booking.Application.Features.Bookings.Events
 {
@@ -21,15 +24,24 @@ namespace Booking.Application.Features.Bookings.Events
 
         public async Task Handle(BookingCancelledEvent domainEvent, CancellationToken cancellationToken)
         {
-            var notification = new NotificationDto
+            var payload = new BookingNotificationPayload
             {
                 BookingId = domainEvent.BookingId,
                 ApartmentId = domainEvent.ApartmentId,
                 ApartmentName = domainEvent.ApartmentName,
-                Status = Domain.Bookings.BookingStatus.Cancelled
+                CheckIn = domainEvent.CheckIn,
+                CheckOut = domainEvent.CheckOut,
+                Status = BookingStatus.Cancelled
             };
-            var message = _templateService.RenderBookingCancelledTemplate(notification);
-            notification.Message = message;
+
+            var notification = new NotificationDto
+            {
+                Type = NotificationTypes.BookingCancelled,
+                Message = _templateService.RenderBookingCancelledTemplate(payload),
+                CreatedAt = domainEvent.DateOccurred,
+                Payload = payload
+            };
+
             try
             {
                 await _notificationService.SendToUserAsync(domainEvent.OwnerId, notification);

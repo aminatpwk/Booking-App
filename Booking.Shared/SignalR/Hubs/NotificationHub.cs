@@ -1,14 +1,13 @@
 ﻿using Booking.Shared.SignalR.Clients;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 
 namespace Booking.Shared.SignalR.Hubs
 {
+    [Authorize(Roles="Owner")]
     public class NotificationHub : Hub<INotificationClient>
     {
         private readonly ILogger<NotificationHub> _logger;
@@ -19,32 +18,35 @@ namespace Booking.Shared.SignalR.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
-            if(userRole == "Owner")
+            var (userId, role) = GetUserIdentifiers();
+            if(role == "Owner" && userId != null)
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, "Owners");
                 await Groups.AddToGroupAsync(Context.ConnectionId, $"owner-{userId}");
             }
             else
             {
-                Debug.WriteLine("A non-owner user connected to NotificationHub.");
+                _logger.LogWarning("A non-owner user attempted to connect to NotificationHub. ConnectionId: {ConnectionId}", Context.ConnectionId);
             }
-                await base.OnConnectedAsync();
+            
+            await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
-
-            if (userRole == "Owner")
+            var (userId, role) = GetUserIdentifiers();  
+            if(role == "Owner" && userId != null)
             {
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, "Owners");
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"owner-{userId}");
             }
 
             await base.OnDisconnectedAsync(exception);
+        }
+
+        private (string? userId, string? role) GetUserIdentifiers()
+        {
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
+            return (userId, role);
         }
     }
 }

@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Booking.Application\Booking.Application.csproj" />
     <ProjectReference Include="..\Booking.Infrastructure\Booking.Infrastructure.csproj" />
-    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\Booking.Shared\Booking.Shared.csproj" />
   </ItemGroup>
 
 </Project>

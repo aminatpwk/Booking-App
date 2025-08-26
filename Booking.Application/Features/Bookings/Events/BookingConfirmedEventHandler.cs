@@ -2,8 +2,10 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Booking.Application.Common.Services.Notifications;
-using Booking.Application.Common.DTOs;
+using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Domain.Bookings;
+using Booking.Application.Common.Enums;
+using Booking.Application.Common.DTOs;
 
 namespace Booking.Application.Features.Bookings.Events
 {
@@ -22,19 +24,23 @@ namespace Booking.Application.Features.Bookings.Events
 
         public async Task Handle(BookingConfirmedEvent domainEvent, CancellationToken cancellationToken)
         {
-            var notification = new NotificationDto
+            var payload = new BookingNotificationPayload
             {
                 BookingId = domainEvent.BookingId,
                 ApartmentId = domainEvent.ApartmentId,
                 ApartmentName = domainEvent.ApartmentName,
                 CheckIn = domainEvent.CheckIn,
                 CheckOut = domainEvent.CheckOut,
-                CreatedAt = domainEvent.DateOccurred,
                 Status = BookingStatus.Confirmed
             };
 
-            var message = _templateService.RenderBookingConfirmedTemplate(notification);
-            notification.Message = message;
+            var notification = new NotificationDto
+            {
+                Type = NotificationTypes.BookingConfirmed,
+                Message = _templateService.RenderBookingConfirmedTemplate(payload),
+                CreatedAt = domainEvent.DateOccurred,
+                Payload = payload
+            };
 
             try
             {
