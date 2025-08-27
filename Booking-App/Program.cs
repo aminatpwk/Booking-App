@@ -44,43 +44,6 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     typeof(ConfirmBookingHandler).Assembly,
     typeof(CancelBookingHandler).Assembly
 ));
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:SecretKey"]!))
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            var accessToken = context.Request.Query["access_token"];
-            var path = context.HttpContext.Request.Path;
-            if(!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notifications"))
-            {
-                context.Token = accessToken;
-            }
-            return Task.CompletedTask;
-        }
-    };
-});
-builder.Services.AddAuthorization();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddHangfire(config =>
-{
-    config.UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-builder.Services.AddHangfireServer();
-builder.Services.AddScoped<IBookingStatusUpdaterJob, BookingStatusUpdaterJob>();
-builder.Services.AddSignalR();
-builder.Services.AddMemoryCache();
-builder.Services.AddResponseCaching();
 builder.Logging.AddConsole().AddDebug().SetMinimumLevel(LogLevel.Debug);
 
 var app = builder.Build();  

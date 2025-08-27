@@ -85,14 +85,14 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
                 var baseUrl = $"{request.Scheme}://{request?.Host}";
 
                 var templateData = new Dictionary<string, object>
-            {
-                {"StartDate", booking.Start.ToString("yyyy-MM-dd") },
-                {"EndDate", booking.End.ToString("yyyy-MM-dd") },
-                {"TotalPrice", booking.TotalPrice.ToString("C") },
-                {"ApartmentName", apartment?.Name ?? "Name of apartment not available" },
-                {"ApartmentAddress", apartment?.Address ?? "Address not available" },
-                {"ConfirmationDate", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm") },
-            };
+                {
+                    {"StartDate", booking.Start.ToString("yyyy-MM-dd") },
+                    {"EndDate", booking.End.ToString("yyyy-MM-dd") },
+                    {"TotalPrice", booking.TotalPrice.ToString("C") },
+                    {"ApartmentName", apartment?.Name ?? "Name of apartment not available" },
+                    {"ApartmentAddress", apartment?.Address ?? "Address not available" },
+                    {"ConfirmationDate", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm") },
+                };
 
                 var email = await _emailTemplateService.CreateEmailFromTemplateAsync(userEmail, "BookingConfirmed", templateData);
                 await _emailService.SendEmailAsync(email);

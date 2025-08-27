@@ -33,5 +33,10 @@ namespace Booking.Infrastructure.Services
             _memoryCache.Set(key, value, cacheEntryOptions);
             return value;
         }
+
+        public void Remove(string key)
+        {
+            _memoryCache.Remove(key);
+        }
     }
 }

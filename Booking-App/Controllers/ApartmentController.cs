@@ -8,12 +8,13 @@ using Booking.Application.Common.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Booking.Application.Common.Services;
 
 namespace Booking_App.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class ApartmentController(ISender _sender) : ControllerBase
+    public class ApartmentController(ISender _sender, ICacheService _cacheService) : ControllerBase
     {
         [HttpPost, Authorize(Roles = "Owner")]
         public async Task<IResult> Create([FromBody] ApartmentDto apartmentDto)
@@ -22,6 +23,7 @@ namespace Booking_App.Controllers
 
             //TO DO: duhet ti bejme handle result qe te ktheje ok ose status code tjeter
             var result = await _sender.Send(command);
+            _cacheService.Remove("apartments_list");
             return Results.Ok(result);
         }
 
@@ -54,6 +56,8 @@ namespace Booking_App.Controllers
         {
             var command = new DeleteApartmentCommand { Id = id };
             var result = await _sender.Send(command);
+            _cacheService.Remove($"apartments_{id}");
+            _cacheService.Remove("apartments_list");
             return Results.Ok(result);
         }
 

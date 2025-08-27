@@ -27,9 +27,14 @@ using Booking.Infrastructure.Services;
 using Booking.Infrastructure.Services.Notifications;
 using Booking.Infrastructure.Users;
 using Booking.Infrastructure.Users.AuthImpl;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Hangfire;
+using Hangfire.SqlServer;
 
 namespace Booking.Infrastructure
 {
@@ -47,6 +52,7 @@ namespace Booking.Infrastructure
             //user scopes 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<CreateUserValidations>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             //apartment scopes
             services.AddScoped<IApartmentRepository, ApartmentRepository>();
@@ -76,6 +82,46 @@ namespace Booking.Infrastructure
             services.AddScoped<ITemplateService, TemplateService>();
 
             services.AddScoped<ICacheService, MemoryCacheService>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtConfig:SecretKey"]!))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notifications"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+            services.AddAuthorization();
+
+            services.AddHangfire(config =>
+            {
+                config.UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"));
+            });
+            services.AddHangfireServer();
+            services.AddScoped<IBookingStatusUpdaterJob, BookingStatusUpdaterJob>();
+            services.AddSignalR();
+            services.AddMemoryCache();
+            services.AddResponseCaching();
+
+            services.AddTransient<IPdfGeneratorService, PdfGeneratorService>();
+
             return services;
 
         }
