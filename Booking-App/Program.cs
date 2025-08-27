@@ -79,6 +79,8 @@ builder.Services.AddHangfire(config =>
 builder.Services.AddHangfireServer();
 builder.Services.AddScoped<IBookingStatusUpdaterJob, BookingStatusUpdaterJob>();
 builder.Services.AddSignalR();
+builder.Services.AddMemoryCache();
+builder.Services.AddResponseCaching();
 builder.Logging.AddConsole().AddDebug().SetMinimumLevel(LogLevel.Debug);
 
 var app = builder.Build();  
@@ -90,6 +92,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseResponseCaching();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

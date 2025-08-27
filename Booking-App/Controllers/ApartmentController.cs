@@ -42,6 +42,7 @@ namespace Booking_App.Controllers
         }
 
         [HttpGet("paged")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
         public async Task<IResult> GetAllApartmentsPaged([FromQuery] GetAllApartmentsPagedQuery query)
         { 
             var result = await _sender.Send(query);

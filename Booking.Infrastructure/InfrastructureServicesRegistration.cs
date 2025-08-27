@@ -16,7 +16,6 @@ using Booking.Application.Features.Users;
 using Booking.Application.Features.Users.Auth;
 using Booking.Application.Features.Users.Commands.CreateUser;
 using Booking.Application.Repositories;
-using Booking.Domain.Reviews;
 using Booking.Infrastructure.Apartments;
 using Booking.Infrastructure.Bookings;
 using Booking.Infrastructure.Emails;
@@ -76,6 +75,7 @@ namespace Booking.Infrastructure
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<ITemplateService, TemplateService>();
 
+            services.AddScoped<ICacheService, MemoryCacheService>();
             return services;
 
         }
