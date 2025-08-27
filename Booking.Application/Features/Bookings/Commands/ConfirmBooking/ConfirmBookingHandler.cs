@@ -65,7 +65,7 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
 
             await SendEmailAfterConfirmation(booking, apartment);
 
-            var bookingConfirmedEvent = new BookingConfirmedEvent(booking.Id, apartment.OwnerId, apartment.Id, apartment.Name, booking.Start, booking.End);
+            var bookingConfirmedEvent = new BookingConfirmedEvent(booking.Id, apartment.Id, apartment.OwnerId, apartment.Name, booking.Start, booking.End);
 
             await _mediator.Publish(bookingConfirmedEvent, cancellationToken);
             return true;

@@ -23,10 +23,12 @@ namespace Booking.Infrastructure.Services.Notifications
             try
             {
                 await _hubContext.Clients.Groups($"owner-{userId}").ReceiveBookingNotification(notification);
+                _logger.LogInformation("Successfully sent notification to user {UserId}", userId);
             }
             catch(Exception ex)
             {
-                Debug.WriteLine("Error sending notification to user {UserId}.");
+                _logger.LogError(ex, "Error sending notification to user {UserId}.");
+                throw;
             }
         }
     }

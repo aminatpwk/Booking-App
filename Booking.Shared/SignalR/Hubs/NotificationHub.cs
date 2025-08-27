@@ -1,4 +1,5 @@
-﻿using Booking.Shared.SignalR.Clients;
+﻿using Booking.Application.Features.Owners;
+using Booking.Shared.SignalR.Clients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -11,17 +12,21 @@ namespace Booking.Shared.SignalR.Hubs
     public class NotificationHub : Hub<INotificationClient>
     {
         private readonly ILogger<NotificationHub> _logger;
-        public NotificationHub(ILogger<NotificationHub> logger)
+        private readonly IOwnerRepository _ownerRepository;
+        public NotificationHub(ILogger<NotificationHub> logger, IOwnerRepository ownerRepository)
         {
             _logger = logger;
+            _ownerRepository = ownerRepository;
         }
 
         public override async Task OnConnectedAsync()
         {
             var (userId, role) = GetUserIdentifiers();
-            if(role == "Owner" && userId != null)
+            if(userId != null)
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, $"owner-{userId}");
+                var ownerModel = await _ownerRepository.GetByUserId(Guid.Parse(userId));
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"owner-{ownerModel.Id}");
+                _logger.LogInformation("User connected: {ConnectionId} with {Id}: ", Context.ConnectionId, ownerModel.Id);
             }
             else
             {
@@ -34,9 +39,10 @@ namespace Booking.Shared.SignalR.Hubs
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             var (userId, role) = GetUserIdentifiers();  
-            if(role == "Owner" && userId != null)
+            if(userId != null)
             {
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"owner-{userId}");
+                var ownerModel = await _ownerRepository.GetByUserId(Guid.Parse(userId));
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"owner-{ownerModel.Id}");
             }
 
             await base.OnDisconnectedAsync(exception);

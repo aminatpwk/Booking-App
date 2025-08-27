@@ -1,10 +1,5 @@
-﻿using Booking.Application.Common.Enums;
-using Booking.Domain.Bookings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Booking.Application.Common.DTOs.BookingDTOs;
+using Booking.Application.Common.Enums;
 
 namespace Booking.Application.Common.DTOs
 {
@@ -13,6 +8,6 @@ namespace Booking.Application.Common.DTOs
         public NotificationTypes Type { get; set; }
         public string Message { get; set; }
         public DateTime CreatedAt { get; set; }
-        public object? Payload { get; set; }
+        public BookingNotificationPayload Payload { get; set; }
     }
 }

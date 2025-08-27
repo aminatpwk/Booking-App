@@ -23,6 +23,7 @@
             const li = document.createElement("li");
             li.textContent = `New notification: ${JSON.stringify(notification)}`;
             document.getElementById("messages").appendChild(li);
+            console.log("Got notification:", notification);
         });
 
         connection.start()
