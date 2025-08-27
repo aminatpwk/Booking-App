@@ -13,5 +13,6 @@ namespace Booking.Application.Features.Emails
     public interface IEmailService
     {
         Task SendEmailAsync(Email email);
+        Task SendEmailWithAttachment(Email email, string attachmentFileName, byte[] attachmentData);
     }
 }

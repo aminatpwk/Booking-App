@@ -4,6 +4,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using Booking.Application.Common.Exceptions;
 using Booking.Application.Common.Model.Email;
+using System.Net.Mail;
 
 namespace Booking.Infrastructure.Emails
 {
@@ -34,6 +35,23 @@ namespace Booking.Infrastructure.Emails
             catch (Exception ex)
             {
                 throw new EmailSendException($"Unexpected error while sending email to {email.To}", email.To);
+            }
+        }
+
+        public async Task SendEmailWithAttachment(Email email, string attachmentFileName, byte[] attachmentData)
+        {
+            var mailMessage = new MailMessage
+            {
+                Subject = email.Subject,
+                Body = email.Body,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(email.To);
+
+            using (var stream = new MemoryStream(attachmentData))
+            {
+                var attachment = new System.Net.Mail.Attachment(stream, attachmentFileName);
+                mailMessage.Attachments.Add(attachment);
             }
         }
     }

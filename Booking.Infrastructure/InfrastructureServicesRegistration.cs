@@ -122,6 +122,8 @@ namespace Booking.Infrastructure
 
             services.AddTransient<IPdfGeneratorService, PdfGeneratorService>();
 
+            services.AddScoped<ICalculatorService, CalculatorService>();
+
             return services;
 
         }
