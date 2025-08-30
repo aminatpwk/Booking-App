@@ -30,6 +30,7 @@ Booking Brains is an apartment booking platform that connects property owners wi
 ### Kafka Error Logging
 Core feature implemented to improve monitoring
  - Kafka Producer: This backend acts as a Kafka Producer, sending detailed error logs to a Kafka Topic whenever an exception occurs in the application
+ - Topic Management with AdminClient API: In addition to sending messages, the application also uses Kafka's **AdminClient API** to programmatically create and manage topics.
  - Kafka Topic: All logs are sent to the topic named error-logs-topic
  - Asynchronous Communication: This process is asynchronous and does not block the main application's execution, ensuring better stability
 
