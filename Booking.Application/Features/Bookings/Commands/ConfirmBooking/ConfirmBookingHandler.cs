@@ -6,10 +6,10 @@ using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
 using Booking.Application.Features.Users;
 using Booking.Domain.Bookings;
-using Booking.Domain.Users;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Booking.Application.Common.Services;
 
 namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
 {
@@ -23,7 +23,8 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
         private readonly IEmailService _emailService;
         private readonly ILogger<ConfirmBookingHandler> _logger;
         private readonly IMediator _mediator;
-        public ConfirmBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, IMediator mediator)
+        private readonly IKafkaProducerService _kafkaProducer;
+        public ConfirmBookingHandler(IBookingRepository bookingRepository, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor, IApartmentRepository apartmentRepository, IEmailTemplateService emailTemplateService, IEmailService emailService, ILogger<ConfirmBookingHandler> logger, IMediator mediator, IKafkaProducerService kafkaProducer)
         {
             _bookingRepository = bookingRepository;
             _currentUserService = currentUserService;
@@ -33,6 +34,7 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
             _emailService = emailService;
             _logger = logger;
             _mediator = mediator;
+            _kafkaProducer = kafkaProducer;
         }
 
         public async Task<bool> Handle(ConfirmBookingCommand command, CancellationToken cancellationToken)
@@ -98,7 +100,16 @@ namespace Booking.Application.Features.Bookings.Commands.ConfirmBooking
                 await _emailService.SendEmailAsync(email);
             }catch(Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email!");
+                //_logger.LogError(ex, "Failed to send email!");
+                var errorLog = new ErrorLogDto
+                {
+                    ErrorMessage = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    Timestamp = DateTime.UtcNow,
+                    SourceService = "BookingApp",
+                    ExceptionType = ex.GetType().FullName
+                };
+                await _kafkaProducer.SendErrorLogAsync(errorLog);
             }
         }
     }

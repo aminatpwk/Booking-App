@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Booking.Domain.Bookings;
 using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Application.Common.Enums;
+using Booking.Application.Common.Services;
 
 namespace Booking.Application.Features.Bookings.Events
 {
@@ -14,12 +15,14 @@ namespace Booking.Application.Features.Bookings.Events
         private readonly INotificationService _notificationService;
         private readonly ITemplateService _templateService;
         private readonly ILogger<BookingCreatedEventHandler> _logger;
+        private readonly IKafkaProducerService _kafkaProducer;
 
-        public BookingCreatedEventHandler(INotificationService notificationService, ITemplateService templateService, ILogger<BookingCreatedEventHandler> logger)
+        public BookingCreatedEventHandler(INotificationService notificationService, ITemplateService templateService, ILogger<BookingCreatedEventHandler> logger, IKafkaProducerService kafkaProducer)
         {
             _notificationService = notificationService;
             _templateService = templateService;
             _logger = logger;
+            _kafkaProducer = kafkaProducer;
         }
 
         public async Task Handle(BookingCreatedEvent domainEvent, CancellationToken cancellationToken)
@@ -49,7 +52,16 @@ namespace Booking.Application.Features.Bookings.Events
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending booking created notification for BookingId: {BookingId}", domainEvent.BookingId);
+                //_logger.LogError(ex, "Error sending booking created notification for BookingId: {BookingId}", domainEvent.BookingId);
+                var errorLog = new ErrorLogDto
+                {
+                    ErrorMessage = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    Timestamp = DateTime.UtcNow,
+                    SourceService = "BookingApp",
+                    ExceptionType = ex.GetType().FullName
+                };
+                await _kafkaProducer.SendErrorLogAsync(errorLog);
             }
         }
     }

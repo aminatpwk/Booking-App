@@ -124,6 +124,8 @@ namespace Booking.Infrastructure
 
             services.AddScoped<ICalculatorService, CalculatorService>();
 
+            services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+
             return services;
 
         }
