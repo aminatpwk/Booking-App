@@ -42,6 +42,8 @@ Core feature implemented to improve monitoring
 - **API Documentation**: Swagger/OpenAPI
 - **Pagination**: For search results
 - **Email Notifications**: For booking confirmations and updates
+- **SignalR Notifications**: Sending notifications to respective owners everytime their apartment is booked
+- **Hangfire**: Manage background jobs such as booking status update
 - **Apache Kafka**: For event streaming and logging
 - **Docker**: Used to set up the Kafka service in the local development environment
 
