@@ -2,7 +2,7 @@
 
 ## Overview
 
-Booking Brains is an apartment booking platform that connects property owners with renters. This repository contains the backend implementation of the system built with ASP.NET, providing APIs for user management, apartment listings, booking reservations, and review functionality.
+Booking Brains is an apartment booking platform that connects property owners with renters. This repository contains the backend implementation of the system built with ASP.NET using the Clean Architecture, CQRS pattern and MediatR, providing APIs for user management, apartment listings, booking reservations, and review functionality.
 
 ## Key Features
 
