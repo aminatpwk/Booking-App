@@ -27,6 +27,12 @@ Booking Brains is an apartment booking platform that connects property owners wi
 - One review per booking policy
 - Rating system for apartments
 
+### Kafka Error Logging
+Core feature implemented to improve monitoring
+ - Kafka Producer: This backend acts as a Kafka Producer, sending detailed error logs to a Kafka Topic whenever an exception occurs in the application
+ - Kafka Topic: All logs are sent to the topic named error-logs-topic
+ - Asynchronous Communication: This process is asynchronous and does not block the main application's execution, ensuring better stability
+
 ## Technical Stack
 
 - **Framework**: ASP.NET Core
@@ -35,6 +41,8 @@ Booking Brains is an apartment booking platform that connects property owners wi
 - **API Documentation**: Swagger/OpenAPI
 - **Pagination**: For search results
 - **Email Notifications**: For booking confirmations and updates
+- **Apache Kafka**: For event streaming and logging
+- **Docker**: Used to set up the Kafka service in the local development environment
 
 ## Getting Started
 
@@ -65,8 +73,16 @@ Booking Brains is an apartment booking platform that connects property owners wi
    ```bash
    dotnet ef database update
    ```
+   
+4. **Start Kafka with Docker**
+   - Make sure you have Docker Desktop installed and running
+   - From the project's root directory, execute this command:
 
-4. **Run the application**
+   ```bash
+   docker-compose up
+   ```
+
+6. **Run the application**
    ```bash
    dotnet run
    ```
