@@ -33,6 +33,7 @@ Core feature implemented to improve monitoring
  - Topic Management with AdminClient API: In addition to sending messages, the application also uses Kafka's **AdminClient API** to programmatically create and manage topics.
  - Kafka Topic: All logs are sent to the topic named error-logs-topic
  - Asynchronous Communication: This process is asynchronous and does not block the main application's execution, ensuring better stability
+ - The Consumer project: [BookingApp Kafka Consumer Project](https://github.com/aminatpwk/BookingApp-Kafka-Logging)
 
 ## Technical Stack
 
