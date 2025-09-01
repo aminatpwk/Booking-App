@@ -24,16 +24,6 @@ namespace Booking.Domain.Users
         {
         }
 
-        //private User(Guid id, string firstName, string lastName, string email, string hashedPassword, DateTime createdOnUtc)
-        //{
-        //    Id = id;
-        //    FirstName = firstName;
-        //    LastName = lastName;
-        //    Email = email;
-        //    Password = hashedPassword;
-        //    CreatedOnUtc = createdOnUtc;
-        //}
-
         public static User CreateUser(string firstName, string lastName, string email, string plainPassword)
         {
             return new User
@@ -46,11 +36,6 @@ namespace Booking.Domain.Users
                 CreatedOnUtc = DateTime.UtcNow
             };
         }
-
-        //public void SetPassword(string plainPassword)
-        //{
-        //    Password = BCrypt.Net.BCrypt.HashPassword(plainPassword);
-        //}
 
         public bool VerifyPassword(string plainPassword)
         {
