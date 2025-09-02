@@ -39,34 +39,30 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
 
             if(request.ApartmentDto.ImagesBase64 != null && request.ApartmentDto.ImagesBase64.Any())
             {
-                var photos = new List<Photo>();
-                foreach (var base64Image in request.ApartmentDto.ImagesBase64)
-                {
-                    try
-                    {
-                        var base64Data = base64Image.Split(',').Last();
-                        var imageBytes = Convert.FromBase64String(base64Data);
-                        var photo = new Photo
-                        {
-                            Id = Guid.NewGuid(),
-                            ApartmentId = apartment.Id,
-                            ImageData = imageBytes,
-                            ImageName = $"{apartment.Id}_{Guid.NewGuid()}.jpg",
-                            ImageType = "image/jpeg",
-                            CreatedAt = DateTime.UtcNow
-                        };
-                        photos.Add(photo);
-                    }
-                    catch (FormatException ex)
-                    {
-                        throw new ValidationException("Invalid image format!");
-                    }
-                }
-                await _photosRepository.AddRangeAsync(photos, cancellationToken);
+                await AddPhotosToApartmentAsync(apartment, request.ApartmentDto.ImagesBase64, cancellationToken);
             }
 
             await _apartmentRepository.SaveChangesAsync(cancellationToken);
             return apartment.Id;
+        }
+
+        private async Task AddPhotosToApartmentAsync(Apartment apartment, IReadOnlyList<string> imagesBase64, CancellationToken cancellationToken)
+        {
+            var photos = imagesBase64.Select(base64Image =>
+            {
+                var base64Data = base64Image.Split(',').Last();
+                var imageBytes = Convert.FromBase64String(base64Data);
+                return new Photo
+                {
+                    Id = Guid.NewGuid(),
+                    ApartmentId = apartment.Id,
+                    ImageData = imageBytes,
+                    ImageName = $"{apartment.Id}_{Guid.NewGuid()}.jpg",
+                    ImageType = "image/jpeg",
+                    CreatedAt = DateTime.UtcNow
+                };
+            }).ToList();
+            await _photosRepository.AddRangeAsync(photos, cancellationToken);
         }
     }
 }
