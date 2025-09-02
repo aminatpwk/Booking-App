@@ -31,6 +31,12 @@ Booking Brains is an apartment booking platform that connects property owners wi
 - One review per booking policy
 - Rating system for apartments
 
+### Middleware & Application Infrastructure
+- **Validation Middleware**: Centralized validation for requests, ensuring clean controllers and consistent error responses
+- **Global Exception Handler**: Unified error handling with custom exception types for better clarity and API standardization
+- **Caching Middleware**: Implemented caching techniques to improve performance on frequent read operations
+
+
 ### Kafka Error Logging
 Core feature implemented to improve monitoring
  - Kafka Producer: This backend acts as a Kafka Producer, sending detailed error logs to a Kafka Topic whenever an exception occurs in the application
@@ -46,6 +52,7 @@ Core feature implemented to improve monitoring
 - **Authentication**: JWT Bearer Tokens
 - **API Documentation**: Swagger/OpenAPI
 - **Pagination**: For search results
+- **Middleware**: Custom Validation Middleware, Global Exception Handling, Caching Techniques
 - **Email Notifications**: For booking confirmations and updates
 - **SignalR Notifications**: Sending notifications to respective owners everytime their apartment is booked
 - **Hangfire**: Manage background jobs such as booking status update
