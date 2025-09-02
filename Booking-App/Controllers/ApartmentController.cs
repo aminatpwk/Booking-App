@@ -20,8 +20,6 @@ namespace Booking_App.Controllers
         public async Task<IResult> Create([FromBody] ApartmentDto apartmentDto)
         {
             var command = new CreateApartmentCommand { ApartmentDto = apartmentDto };
-
-            //TO DO: duhet ti bejme handle result qe te ktheje ok ose status code tjeter
             var result = await _sender.Send(command);
             _cacheService.Remove("apartments_list");
             return Results.Ok(result);

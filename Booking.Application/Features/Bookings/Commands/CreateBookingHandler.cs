@@ -1,15 +1,11 @@
-﻿using AutoMapper;
-using Booking.Application.Common.DTOs;
+﻿using Booking.Application.Common.DTOs.BookingDTOs;
 using Booking.Application.Common.Events.Bookings;
-using Booking.Application.Common.Services.Notifications;
 using Booking.Application.Features.Apartments;
 using Booking.Application.Features.Emails;
-using Booking.Application.Features.Owners;
 using Booking.Application.Features.Users;
 using Booking.Domain.Bookings;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 
 namespace Booking.Application.Features.Bookings.Commands
 {
@@ -49,11 +45,8 @@ namespace Booking.Application.Features.Bookings.Commands
                 throw new Exception("This apartment is already booked for this period!");
             }
 
-            //TO DO: me implementu logjiken e llogaritjes se cmimit dhe totalit sipas kritereve
-            decimal priceForPeriod = 35;
-            decimal cleaningFee = 5;
-            decimal amenitiesUpCharge = 5;
-            var bookingEntity = BookingEntity.Create(bookingDto.ApartmentId, userId, bookingDto.Start, bookingDto.End, priceForPeriod, cleaningFee, amenitiesUpCharge);
+           var (totalPrice, cleaningFee, amenitiesUpCharge) = CalculateBookingPrice(apartment, bookingDto);
+           var bookingEntity = BookingEntity.Create(bookingDto.ApartmentId, userId, bookingDto.Start, bookingDto.End, totalPrice, cleaningFee, amenitiesUpCharge);
 
             bookingEntity.GenerateConfirmationToken();
             await _bookingRepository.Add(bookingEntity);
@@ -99,6 +92,21 @@ namespace Booking.Application.Features.Bookings.Commands
             {
                 throw;
             }
+        }
+
+        private (decimal totalPrice, decimal cleaningFee, decimal amenitiesUpCharge) CalculateBookingPrice(Apartment apartment, CreateBookingDto bookingDto)
+        {
+            if (bookingDto.Start >= bookingDto.End)
+            {
+                throw new Exception("End date must be after start date!");
+            }
+
+            var numberOfNights = (decimal)(bookingDto.End - bookingDto.Start).TotalDays;
+            decimal priceForPeriod = numberOfNights * apartment.Price;
+            decimal cleaningFee = apartment.CleaningFee;
+            decimal amenitiesUpCharge = 0; //TO DO: implement logic for amenities upcharge if needed
+            decimal totalPrice = priceForPeriod + cleaningFee + amenitiesUpCharge;
+            return (totalPrice, cleaningFee, amenitiesUpCharge);
         }
     }
 }

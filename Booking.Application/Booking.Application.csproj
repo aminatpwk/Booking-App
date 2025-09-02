@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Owners\Queries\" />
-    <Folder Include="Features\Users\Commands\DeleteUser\" />
     <Folder Include="Features\Users\Queries\GetUserById\" />
   </ItemGroup>
 
