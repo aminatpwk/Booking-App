@@ -1,5 +1,9 @@
 # Booking Brains - Backend Project (ASP.NET)
 
+![.NET](https://img.shields.io/badge/.NET-8.0-blueviolet)
+![Database](https://img.shields.io/badge/Database-SQL%20Server-informational)
+![License](https://img.shields.io/badge/License-Proprietary-red)
+![Status](https://img.shields.io/badge/Status-Finished-brightgreen)
 ## Overview
 
 Booking Brains is an apartment booking platform that connects property owners with renters. This repository contains the backend implementation of the system built with ASP.NET using the Clean Architecture, CQRS pattern and MediatR, providing APIs for user management, apartment listings, booking reservations, and review functionality.
@@ -105,6 +109,8 @@ The API follows RESTful conventions with these main resources:
 ### API Documentation
 
 Access Swagger documentation at `/swagger` when running the application for detailed API endpoint information.
+<img width="1842" height="702" alt="image" src="https://github.com/user-attachments/assets/d2c9104d-f570-4ce9-b36f-cbf6e402278e" />
+
 
 ## Business Rules
 
@@ -113,6 +119,11 @@ Access Swagger documentation at `/swagger` when running the application for deta
 - Reviews can only be submitted for completed bookings
 - All apartment listings must include at least 4 photos
 - Users can only review apartments they've actually stayed in
+
+## Testing
+You can test API directly from
+- Swagger UI;
+- Postman
 
 ## License
 
