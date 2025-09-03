@@ -37,10 +37,13 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
             apartment.Owner = owner;
             await _apartmentRepository.Add(apartment);
 
-            if(request.ApartmentDto.ImagesBase64 != null && request.ApartmentDto.ImagesBase64.Any())
+            var apartmentPhotos = request.ApartmentDto.ImagesBase64;
+            if(apartmentPhotos.Count() < 4)
             {
-                await AddPhotosToApartmentAsync(apartment, request.ApartmentDto.ImagesBase64, cancellationToken);
+                throw new ValidationException("At least 4 images are required.");
             }
+
+            await AddPhotosToApartmentAsync(apartment, request.ApartmentDto.ImagesBase64, cancellationToken);
 
             await _apartmentRepository.SaveChangesAsync(cancellationToken);
             return apartment.Id;
@@ -48,6 +51,10 @@ namespace Booking.Application.Features.Apartments.Commands.CreateApartment
 
         private async Task AddPhotosToApartmentAsync(Apartment apartment, IReadOnlyList<string> imagesBase64, CancellationToken cancellationToken)
         {
+            if (imagesBase64.Count() < 4)
+            {
+                throw new ValidationException("At least 4 images are required.");
+            }
             var photos = imagesBase64.Select(base64Image =>
             {
                 var base64Data = base64Image.Split(',').Last();

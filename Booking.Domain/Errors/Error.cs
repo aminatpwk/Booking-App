@@ -7,60 +7,60 @@ using System.Threading.Tasks;
 
 namespace Booking.Domain.Errors
 {
-    public record Error
+    public abstract record Error
     {
         public string Code { get; }
         public string Message { get; }
         public ErrorType Type { get; }
         public string? Details { get; }
         public Dictionary<string, object>? Metadata { get; }
-        public DateTime Timestamp { get; }
-        public string? TraceId {  get; }
-        private Error(string code, string message, ErrorType type, string? details = null, Dictionary<string, object>? metadata = null, string? traceId = null)
+        public DateTime Timestamp { get; } = DateTime.UtcNow;
+        public string? TraceId { get; }
+
+        protected Error(string code, string message, ErrorType type, string? details = null, Dictionary<string, object>? metadata = null, string? traceId = null)
         {
             Code = code;
             Message = message;
             Type = type;
             Details = details;
             Metadata = metadata;
-            Timestamp = DateTime.UtcNow;
             TraceId = traceId;
         }
 
+        public static Error None => new NoneError();
 
-        public static Error None = new(string.Empty, string.Empty, ErrorType.Failure);
-        public static Error NullValue = new("Error.NullValue", "Value cannot be null.", ErrorType.Failure);
-        public static Error NotFound(string code, string message, string? details = null, Dictionary<string, object>? metadata = null) => new(code, message, ErrorType.NotFound, details, metadata);
-        public static Error GeneralError = new("Error.Failure", "Something went wrong.", ErrorType.Failure);
-        public static Error RelationError = new("Error.Relation", "This record has a cascade deleting error.", ErrorType.Conflict);
-        public static Error Conflict(string code, string message, string? details = null) => new(code, message, ErrorType.Conflict, details);
-        public static Error BadRequest(string code, string message, string? details = null, Dictionary<string, object>? metadata = null) => new(code, message, ErrorType.BadRequest, details, metadata);
-        public static Error Unauthorized(string code, string message, string? details = null) => new(code, message, ErrorType.Unauthorized, details);
-        public static Error Failure(string code, string message, string? details = null, Dictionary<string, object>? metadata = null, string? traceId = null) => new(code, message, ErrorType.Failure, details, metadata, traceId);
-        public static Error Forbidden(string code, string message, string? details) => new(code, message, ErrorType.Forbidden, details);
-
-        public static Error EmailSendError(string message, string? recipient = null, string? details = null)
-        {
-            var fullMessage = recipient != null ? $"Failed to send email to {recipient}: {message}" : $"Failed to send email: {message}";
-            var metadata = recipient != null ? new Dictionary<string, object> { ["recipient"] = recipient } : null;
-            return new("Email.SendFailed", fullMessage, ErrorType.Failure, details, metadata);
-        }
-
-        public static Error ValidationError(string message, Dictionary<string, string[]> validationErrors)
-        {
-            var metadata = new Dictionary<string, object> { ["validationErrors"] = validationErrors};
-            return new("Validation.Failed", message, ErrorType.BadRequest, "One or more validation errors occurred!", metadata);
-        }
-
-        public static Error DatabaseError(string message, string? details = null, string? traceId = null)
-        {
-            return new("Database.Error", message, ErrorType.Failure, details, null, traceId);
-        }
-
-        public static Error ExternalServiceError(string serviceName, string message, string? details = null)
-        {
-            var metadata = new Dictionary<string, object> { ["serviceName"] = serviceName};
-            return new("ExternalService.Error", message, ErrorType.Failure, details, metadata);
-        }
+        private sealed record NoneError() : Error(string.Empty, string.Empty, ErrorType.Failure);
     }
+
+    public sealed record NotFoundError(string Code, string Message, string? Details = null, Dictionary<string, object>? Metadata = null)
+        : Error(Code, Message, ErrorType.NotFound, Details, Metadata);
+
+    public sealed record BadRequestError(string Code, string Message, string? Details = null, Dictionary<string, object>? Metadata = null)
+        : Error(Code, Message, ErrorType.BadRequest, Details, Metadata);
+
+    public sealed record ConflictError(string Code, string Message, string? Details = null)
+        : Error(Code, Message, ErrorType.Conflict, Details);
+
+    public sealed record UnauthorizedError(string Code, string Message, string? Details = null)
+        : Error(Code, Message, ErrorType.Unauthorized, Details);
+
+    public sealed record ForbiddenError(string Code, string Message, string? Details = null)
+        : Error(Code, Message, ErrorType.Forbidden, Details);
+
+    public sealed record ValidationError(string Message, Dictionary<string, string[]> ValidationErrors)
+        : Error("Validation.Failed", Message, ErrorType.BadRequest, "One or more validation errors occurred!", new Dictionary<string, object> { ["validationErrors"] = ValidationErrors });
+
+    public sealed record DatabaseError(string Message, string? Details = null, string? TraceId = null)
+        : Error("Database.Error", Message, ErrorType.Failure, Details, null, TraceId);
+
+    public sealed record ExternalServiceError(string ServiceName, string Message, string? Details = null)
+        : Error("ExternalService.Error", Message, ErrorType.Failure, Details, new Dictionary<string, object> { ["serviceName"] = ServiceName });
+
+    public sealed record EmailSendError(string Message, string? Recipient = null, string? Details = null)
+        : Error("Email.SendFailed",
+                Recipient != null ? $"Failed to send email to {Recipient}: {Message}" : $"Failed to send email: {Message}",
+                ErrorType.Failure,
+                Details,
+                Recipient != null ? new Dictionary<string, object> { ["recipient"] = Recipient } : null);
+
 }

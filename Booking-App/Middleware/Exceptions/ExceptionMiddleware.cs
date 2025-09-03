@@ -48,13 +48,13 @@ namespace Booking.Application.Common.Exceptions
 
         private Error MapExceptionToError(Exception ex) => ex switch
         {
-            FluentValidation.ValidationException fve => Error.BadRequest("ValidationError", FormatFluentValidationErrors(fve)),
-            System.ComponentModel.DataAnnotations.ValidationException ve => Error.BadRequest("ValidatioError", ve.Message),
-            EmailSendException ese => Error.EmailSendError("Email.SendFailed", $"Failed to send email: {ese.Message}"),
-            ArgumentNullException => Error.NullValue,
-            KeyNotFoundException => Error.NotFound("KeyNotFound", ex.Message),
-            UnauthorizedAccessException => Error.Unauthorized("Error.Unauthorized", "Access denied."),
-            _ => Error.GeneralError
+            FluentValidation.ValidationException fve => new ValidationError("One or more validation errors occurred!", FormatFluentValidationErrors(fve)),
+            System.ComponentModel.DataAnnotations.ValidationException ve => new BadRequestError("ValidationError", ve.Message),
+            EmailSendException ese => new EmailSendError("Email.SendFailed", ese.Message),
+            ArgumentNullException => Error.None, 
+            KeyNotFoundException => new NotFoundError("KeyNotFound", ex.Message),
+            UnauthorizedAccessException => new UnauthorizedError("Error.Unauthorized", "Access denied."),
+            _ => new BadRequestError("Error.General", "Something went wrong.") 
         };
 
         private int MapErrorTypeToStatusCode(ErrorType type) => type switch
@@ -69,10 +69,14 @@ namespace Booking.Application.Common.Exceptions
             _=> (int)HttpStatusCode.InternalServerError
         };
 
-        private string FormatFluentValidationErrors(FluentValidation.ValidationException exception)
+        private Dictionary<string, string[]> FormatFluentValidationErrors(FluentValidation.ValidationException exception)
         {
-            var errors = exception.Errors.GroupBy(e => e.PropertyName).Select(g => $"{g.Key}: {string.Join(", ", g.Select(e => e.ErrorMessage))}");
-            return string.Join(" | ", errors);
+            return exception.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
         }
 
         private object CreateErrorResponse(Error error, Exception originalException)
