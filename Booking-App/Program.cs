@@ -12,18 +12,23 @@ using Booking.Application.Features.Bookings.Queries.GetAll;
 using Booking.Application.Features.Owners.Commands;
 using Booking.Application.Features.Photos.Commands.DeletePhotos;
 using Booking.Application.Features.Reviews.Commands.CreateReview;
-using Booking.Application.Features.Users;
 using Booking.Application.Features.Users.Commands.CreateUser;
 using Booking.Infrastructure;
-using Booking.Infrastructure.Services;
-using Booking.Infrastructure.Users;
 using Hangfire;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Booking.Shared.SignalR.Hubs;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//remove origin cors if not necessary or adjust by frontend url
+var specificOrigins = "_specificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: specificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+        });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -54,6 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(specificOrigins);
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseResponseCaching();
 app.UseHttpsRedirection();
