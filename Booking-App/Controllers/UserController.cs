@@ -4,12 +4,13 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Booking.Application.Features.Users.Login;
 using Booking.Application.Features.Users.Commands.DeleteUser;
+using Booking.Application.Common.Services;
 
 namespace Booking_App.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class UserController(ISender _sender) : ControllerBase
+    public class UserController(ISender _sender, IElasticService _elasticService) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<IResult> Register([FromBody] UserDto userDto)
@@ -33,6 +34,13 @@ namespace Booking_App.Controllers
             var command = new DeleteUserCommand { Id = id };
             var result = await _sender.Send(command);
             return Results.Ok(result);
+        }
+
+        [HttpPost("create-index")]
+        public async Task<IActionResult> CreateIndex(string indexName)
+        {
+            await _elasticService.CreateIndexIfNotExistsAsync(indexName);
+            return Ok($"Index '{indexName}' created or already exists.");
         }
     }
 }

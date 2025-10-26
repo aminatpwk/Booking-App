@@ -35,6 +35,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Hangfire;
 using Hangfire.SqlServer;
+using Booking.Application.Common.Configurations;
 
 namespace Booking.Infrastructure
 {
@@ -125,6 +126,9 @@ namespace Booking.Infrastructure
             services.AddScoped<ICalculatorService, CalculatorService>();
 
             services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+
+            services.AddSingleton<IElasticService, ElasticService>();
+            services.Configure<ElasticSettings>(configuration.GetSection("ElasticSettings"));
 
             return services;
 

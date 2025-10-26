@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="2.11.1" />
     <PackageReference Include="Confluent.Kafka.Core.Abstractions" Version="1.0.6" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.0.4" />
     <PackageReference Include="Hangfire" Version="1.8.21" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.21" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
