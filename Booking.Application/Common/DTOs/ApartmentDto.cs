@@ -10,6 +10,7 @@ namespace Booking.Application.Common.DTOs
 {
     public class ApartmentDto
     {
+        public Guid Id { get; set; }
         public Guid OwnerId { get; set; }
         public string Name { get; init; }
         public string Country { get; init; }
