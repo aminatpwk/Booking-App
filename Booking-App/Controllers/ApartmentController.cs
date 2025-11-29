@@ -16,12 +16,14 @@ namespace Booking_App.Controllers
     [ApiController]
     public class ApartmentController(ISender _sender, ICacheService _cacheService) : ControllerBase
     {
+        private const string CacheKeyPrefix = "apartments_paged";
+
         [HttpPost, Authorize(Roles = "Owner")]
         public async Task<IResult> Create([FromBody] ApartmentDto apartmentDto)
         {
             var command = new CreateApartmentCommand { ApartmentDto = apartmentDto };
             var result = await _sender.Send(command);
-            _cacheService.Remove("apartments_list");
+            await InvalidateApartmentCaches();
             return Results.Ok(result);
         }
 
@@ -42,7 +44,6 @@ namespace Booking_App.Controllers
         }
 
         [HttpGet("paged")]
-        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
         public async Task<IResult> GetAllApartmentsPaged([FromQuery] GetAllApartmentsPagedQuery query)
         { 
             var result = await _sender.Send(query);
@@ -52,22 +53,39 @@ namespace Booking_App.Controllers
         [HttpDelete("{id}"), Authorize(Roles = "Owner")]
         public async Task<IResult> Delete(Guid id)
         {
+            //TODO: verify owner before deletion
+
             var command = new DeleteApartmentCommand { Id = id };
             var result = await _sender.Send(command);
             _cacheService.Remove($"apartments_{id}");
-            _cacheService.Remove("apartments_list");
+            await InvalidateApartmentCaches();
             return Results.Ok(result);
         }
 
         [HttpPut("{id}"), Authorize(Roles = "Owner")]
         public async Task<IResult> Update(Guid id, [FromBody] ApartmentDetailDto apartmentDetailDto)
         {
+            //TODO: verify owner before update
+
             var command = new UpdateApartmentCommand { 
                 Id = id,
                 ApartmentDetailDto = apartmentDetailDto 
             };
             var result = await _sender.Send(command);
+            _cacheService.Remove($"apartment_{id}");
+            await InvalidateApartmentCaches();
             return Results.Ok(result);
         }
+
+
+        #region private method
+
+        private async Task InvalidateApartmentCaches()
+        {
+            await _cacheService.RemoveByPatternAsync($"{CacheKeyPrefix}:*");
+            _cacheService.Remove("apartments_list");
+
+        }
+        #endregion
     }
 }

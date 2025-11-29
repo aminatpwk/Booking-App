@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Booking.Application.Features.Owners;
+﻿using Booking.Application.Features.Owners;
 using Booking.Domain.Owners;
 using Booking.Infrastructure.GenericRepoImpl;
-using MediatR.NotificationPublishers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Owners

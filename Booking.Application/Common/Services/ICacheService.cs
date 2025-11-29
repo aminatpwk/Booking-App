@@ -10,5 +10,11 @@ namespace Booking.Application.Common.Services
     {
         Task<T> GetAsync<T>(string key, Func<Task<T>> factory, TimeSpan? expiration = null);
         void Remove(string key);
+
+        Task RemoveByPatternAsync(string pattern);
+
+        Task RemoveByTagAsync(string tag);
+
+        Task SetAsync<T>(string key, T value, TimeSpan? expiration = null, params string[] tags);
     }
 }
